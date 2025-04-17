@@ -6,12 +6,23 @@ const upload = multer({ dest: './public/uploads/' })
 exports.getAll = async (req, res) => {
     try {
         const ads = await Ad.find();
-        if(ads.length > 0){
-            res.json(ads);
-        } else res.json({ message: 'Empty DB'});
+        if(ads.length > 0) res.json(ads)
+        else res.json({ message: 'Empty DB'});
     }
     catch(err) {
         res.status(500).json({ message: 'Internal Server Error'});
+    }
+}
+
+exports.getSearchPhrase = async (req, res) => {
+    try {
+        const searchPhrase = sanitize(req.params.searchPhrase);
+        const ads = await Ad.find({ title: {$regex: searchPhrase, $options: 'i'}});
+        if(ads.length > 0) res.json(ads);
+        else res.json({ message: 'Not Found' });
+    }
+    catch(err) {
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
