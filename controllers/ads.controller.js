@@ -1,12 +1,13 @@
 const Ad = require('./../models/ads.model');
+const User = require('./../models/users.model');
 const sanitize = require('mongo-sanitize');
 const multer  = require('multer')
 const upload = multer({ dest: './public/uploads/' })
 
 exports.getAll = async (req, res) => {
     try {
-        const ads = await Ad.find();
-        if(ads.length > 0) res.json(ads)
+        const ads = await Ad.find().populate('author');
+        if(ads.length > 0) res.json(ads);
         else res.json({ message: 'Empty DB'});
     }
     catch(error) {
@@ -17,7 +18,7 @@ exports.getAll = async (req, res) => {
 exports.getSearchPhrase = async (req, res) => {
     try {
         const searchPhrase = sanitize(req.params.searchPhrase);
-        const ads = await Ad.find({ title: {$regex: searchPhrase, $options: 'i'}});
+        const ads = await Ad.find({ title: {$regex: searchPhrase, $options: 'i'}}).populate('author');
         if(ads.length > 0) res.json(ads);
         else res.json({ message: 'Not Found' });
     }
@@ -29,12 +30,12 @@ exports.getSearchPhrase = async (req, res) => {
 exports.getOne = async (req, res) => {
     try {
         const id = sanitize(req.params.id);
-        const ad = await Ad.findById(id);
+        const ad = await Ad.findById(id).populate('author');
         if(ad) res.json(ad);
         else res.status(404).json({ message: 'Not found'});
     }
     catch(error){
-        res.status(500).json({ message: err });
+        res.status(500).json({ message: error });
     }
 }
 
