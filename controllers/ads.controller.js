@@ -9,7 +9,7 @@ exports.getAll = async (req, res) => {
         if(ads.length > 0) res.json(ads)
         else res.json({ message: 'Empty DB'});
     }
-    catch(err) {
+    catch(error) {
         res.status(500).json({ message: 'Internal Server Error'});
     }
 }
@@ -21,7 +21,7 @@ exports.getSearchPhrase = async (req, res) => {
         if(ads.length > 0) res.json(ads);
         else res.json({ message: 'Not Found' });
     }
-    catch(err) {
+    catch(error) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
@@ -33,10 +33,9 @@ exports.getOne = async (req, res) => {
         if(ad) res.json(ad);
         else res.status(404).json({ message: 'Not found'});
     }
-    catch(err){
+    catch(error){
         res.status(500).json({ message: err });
     }
-    
 }
 
 exports.addNew = [ upload.single('image'), async(req, res) => {
@@ -53,7 +52,13 @@ exports.addNew = [ upload.single('image'), async(req, res) => {
             } else res.status(400).json({ message: 'Invalid file'});
         } else res.status(400).json({ message: 'All params required' });
     }
-    catch(err){
+    catch(error){
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Invalid params',
+                errors: Object.values(error.errors).map(err => err.message)
+            });
+        }
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }];
@@ -74,7 +79,13 @@ exports.editOne = [ upload.single('image'), async(req, res) => {
             } else res.status(400).json({ message: 'All params required' });
         } else res.status(404).json({ message: 'Not found' });
     }
-    catch(err){
+    catch(error){
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Invalid params',
+                errors: Object.values(error.errors).map(err => err.message)
+            });
+        }
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }];
@@ -88,7 +99,7 @@ exports.removeOne = async(req, res) => {
             res.json({ message: 'OK' });
         } else res.status(404).json({ message: 'Not found'}); 
     }
-    catch(err) {
+    catch(error) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
