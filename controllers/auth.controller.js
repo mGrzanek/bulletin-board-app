@@ -37,8 +37,6 @@ exports.login = async (req, res) => {
                     const user = {
                         id: userWithLogin.id,
                         login: userWithLogin.login,
-                        avatar: userWithLogin.avatar,
-                        phone: userWithLogin.phone
                     }
                     req.session.user = user;
                     res.json({ message: 'Login successful!'});
