@@ -34,7 +34,13 @@ exports.login = async (req, res) => {
             const userWithLogin = await User.findOne({ login });
             if(userWithLogin) {
                 if(bcrypt.compareSync(password, userWithLogin.password)) {
-                    req.session.login = userWithLogin.login;
+                    const user = {
+                        id: userWithLogin.id,
+                        login: userWithLogin.login,
+                        avatar: userWithLogin.avatar,
+                        phone: userWithLogin.phone
+                    }
+                    req.session.user = user;
                     res.json({ message: 'Login successful!'});
                 }
                 else res.status(400).json({ message: 'Login or password are incorrect'});
