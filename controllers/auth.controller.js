@@ -33,7 +33,10 @@ exports.login = async (req, res) => {
         if(login && typeof login === 'string' && password && typeof password === 'string'){
             const userWithLogin = await User.findOne({ login });
             if(userWithLogin) {
-                if(bcrypt.compareSync(password, userWithLogin.password)) res.json({ message: 'Login successful!'});
+                if(bcrypt.compareSync(password, userWithLogin.password)) {
+                    req.session.login = userWithLogin.login;
+                    res.json({ message: 'Login successful!'});
+                }
                 else res.status(400).json({ message: 'Login or password are incorrect'});
             } else res.status(400).json({ message: 'Login or password are incorrect'});
         } else res.status(400).json({ message: 'Invalid params' });
@@ -41,4 +44,9 @@ exports.login = async (req, res) => {
     catch(error){
         res.status(500).json({ message: error.message });
     }
+}
+
+exports.getUser = async (req, res) => {
+    if(req.session.login) res.status(200).json({ message: `Login: ${req.session.login}` });
+    else res.status(401).json({ message: 'You are not authorized' });
 }

@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 const adsRouter = require('./routes/ads.routes');
 const authRouter = require('./routes/auth.routes');
@@ -25,6 +27,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
+app.use(session({ secret: 'abc123', store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false }));
 
 app.use('/api', adsRouter);
 app.use('/auth', authRouter);
