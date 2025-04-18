@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
 const adsRouter = require('./routes/ads.routes');
+const authRouter = require('./routes/auth.routes');
 const app = express();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api', adsRouter);
+app.use('/auth', authRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
