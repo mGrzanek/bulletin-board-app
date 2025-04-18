@@ -28,5 +28,17 @@ exports.register = [ upload.single('avatar'), async (req, res) => {
 }];
 
 exports.login = async (req, res) => {
-    res.json({ message: 'Login' });
+    try {
+        const { login, password } = req.body;
+        if(login && typeof login === 'string' && password && typeof password === 'string'){
+            const userWithLogin = await User.findOne({ login });
+            if(userWithLogin) {
+                if(bcrypt.compareSync(password, userWithLogin.password)) res.json({ message: 'Login successful!'});
+                else res.status(400).json({ message: 'Login or password are incorrect'});
+            } else res.status(400).json({ message: 'Login or password are incorrect'});
+        } else res.status(400).json({ message: 'Invalid params' });
+    }
+    catch(error){
+        res.status(500).json({ message: error.message });
+    }
 }
