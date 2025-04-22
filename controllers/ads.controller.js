@@ -11,7 +11,7 @@ exports.getAll = async (req, res) => {
     try {
         const ads = await Ad.find().populate('author');
         if(ads.length > 0) return res.json(ads);
-        else return res.json({ message: 'Empty DB'});
+        else return res.json({ message: 'No ads'});
     }
     catch(error) {
         return res.status(500).json({ message: 'Internal Server Error'});

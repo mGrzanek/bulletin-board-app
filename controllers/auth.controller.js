@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const getImageFileType = require('./../utils/getImageFileType');
 const path = require('path');
 const removeFile = require('./../utils/removeFile');
+const Session = require('./../models/session.model');
 
 exports.register = async (req, res) => {
     try {
