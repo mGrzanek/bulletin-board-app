@@ -7,7 +7,7 @@ router.get('/ads', AdsController.getAll);
 router.get('/ads/search/:searchPhrase', AdsController.getSearchPhrase);
 router.get('/ads/:id', AdsController.getOne);
 router.post('/ads', imageUpload.single('image'), AdsController.addNew);
-router.put('/ads/:id', AdsController.editOne);
+router.put('/ads/:id', imageUpload.single('image'), AdsController.editOne);
 router.delete('/ads/:id', AdsController.removeOne);
 
 module.exports = router;
