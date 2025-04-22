@@ -1,8 +1,9 @@
 const Ad = require('./../models/ads.model');
 const User = require('./../models/users.model');
 const sanitize = require('mongo-sanitize');
-const multer  = require('multer')
-const upload = multer({ dest: './public/uploads/' })
+const multer  = require('multer');
+const upload = multer({ dest: './public/uploads/'});
+const getImageFileType = require('./../utils/getImageFileType');
 
 exports.getAll = async (req, res) => {
     try {
@@ -39,15 +40,16 @@ exports.getOne = async (req, res) => {
     }
 }
 
-exports.addNew = [ upload.single('image'), async(req, res) => {
+exports.addNew = async(req, res) => {
     try {
         sanitize(req.body);
         const {title, content, publicationDate, price, location, author} = req.body;
         const image = req.file;
+        const fileType = req.file ? await getImageFileType(req.file): 'unknown';
         if(title && content && publicationDate && image && price && location && author){
             const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            if(imageMimeTypes.includes(image.mimetype)){
-                const newAd = new Ad({ title, content, publicationDate, image: image.originalname, price, location, author});
+            if(imageMimeTypes.includes(fileType)){
+                const newAd = new Ad({ title, content, publicationDate, image: image.filename, price, location, author});
                 await newAd.save();
                 res.json({ message: 'OK' });
             } else res.status(400).json({ message: 'Invalid file'});
@@ -62,7 +64,7 @@ exports.addNew = [ upload.single('image'), async(req, res) => {
         }
         res.status(500).json({ message: 'Internal Server Error' });
     }
-}];
+};
 
 exports.editOne = [ upload.single('image'), async(req, res) => {
     try {

@@ -1,31 +1,41 @@
 const User = require('./../models/users.model');
-const multer  = require('multer');
-const upload = multer({ dest: './public/uploads/' });
 const bcrypt = require('bcryptjs');
+const getImageFileType = require('./../utils/getImageFileType');
+const path = require('path');
+const removeFile = require('./../utils/removeFile');
 
-exports.register = [ upload.single('avatar'), async (req, res) => {
+exports.register = async (req, res) => {
     try {
         const {login, password, phone} = req.body;
         const avatar = req.file;
+        const filePath = null;
         if(login && typeof login === 'string' && password && typeof password === 'string' 
-            && avatar && phone && typeof phone === 'string'){
+            && avatar && typeof avatar === 'object' && phone && typeof phone === 'string'){
+            const fileType = avatar ? await getImageFileType(avatar) : 'unknown';
+            filePath = path.join(process.cwd(), 'public', 'uploads', avatar.filename);
             const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            if(imageMimeTypes.includes(avatar.mimetype)){
+            if(imageMimeTypes.includes(fileType)){
                 const userWithLogin = await User.findOne({ login });
-                if(userWithLogin) res.status(409).json({ message: 'User with this login already exist'});
-                else {
+                if(userWithLogin){
+                    await removeFile(filePath);
+                    return res.status(409).json({ message: 'User with this login already exist'});
+                } else {
                     const newUser = await User.create({ 
-                        login, password: await bcrypt.hash(password, 10), avatar: avatar.originalname, phone
+                        login, password: await bcrypt.hash(password, 10), avatar: avatar.filename, phone
                     });
                     res.status(201).json({ message: `User created ${newUser.login}`});
                 }
-            } else res.status(400).json({ message: 'Invalid file' });
-        } else res.status(400).json({ message: 'Invalid params' });
+            } else return res.status(400).json({ message: 'Invalid file' });
+        } else {
+            await removeFile(filePath);
+            return res.status(400).json({ message: 'Invalid params' });
+        }
     }
     catch(error){
+        await removeFile(filePath);
         res.status(500).json({ message: error.message });
     }
-}];
+};
 
 exports.login = async (req, res) => {
     try {
@@ -52,4 +62,15 @@ exports.login = async (req, res) => {
 
 exports.getUser = async (req, res) => {
     res.json({ message: 'Logged' });
+}
+
+exports.logout = async (req, res) => {
+    if (process.env.NODE_ENV !== "production") {
+        await Session.deleteMany({});
+        res.json({ message: "You are logged out" });
+    }
+    else {
+        req.session.destroy();
+        res.json({ message: "You are logged out" });
+    }
 }
