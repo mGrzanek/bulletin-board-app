@@ -13,10 +13,10 @@ Then install the necessary packages using:
 
 `npm install`
 or
-`npm run dev`
+`yarn install`
 
 To start the application use: 
 
-`yarn start`
+`npm start`
 or
-`npm install`
+`yarn start`
