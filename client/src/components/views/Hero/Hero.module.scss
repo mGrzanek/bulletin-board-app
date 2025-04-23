@@ -1,0 +1,28 @@
+@import "./../../../../styles/settings.scss";
+
+.hero {
+    background: url('./../../../../public/images/hero4.jpg') no-repeat center center / cover;
+    height: 30vh;
+    text-align: center;
+    position: relative;
+}
+
+.title {
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-family: $font-satisfy;
+    text-shadow: 1px 1px 5px black;
+}
+
+.layer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}

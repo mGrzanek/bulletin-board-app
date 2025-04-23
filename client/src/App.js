@@ -8,10 +8,12 @@ import AddForm from "./components/pages/AddForm/AddForm";
 import EditForm from "./components/pages/EditForm/EditForm";
 import JoinForm from "./components/pages/JoinForm/JoinForm";
 import LoginForm from "./components/pages/LoginForm/LoginForm";
+import Header from "./components/views/Header/Header";
 
 const App = () => {
   return (
     <Container>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ads/:id" element={<SingleAd />} />
