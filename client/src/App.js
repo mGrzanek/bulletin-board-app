@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { fetchAds } from "./redux/adsReducer";
+import { useDispatch } from "react-redux";
 import { Container } from "react-bootstrap";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/pages/Home/Home";
@@ -11,6 +14,8 @@ import LoginForm from "./components/pages/LoginForm/LoginForm";
 import Header from "./components/views/Header/Header";
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(() => dispatch(fetchAds()), [dispatch]);
   return (
     <Container>
       <Header />
