@@ -1,6 +1,12 @@
+import Search from "../../views/Search/Search";
+import Ads from "../../features/SearchForm/Ads/Ads";
+
 const Home = () => {
     return(
-        <h2>Home</h2>
+        <div>
+            <Search />
+            <Ads />
+        </div>
     );
 };
 
