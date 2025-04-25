@@ -2,6 +2,7 @@ import { API_URL } from "../config";
 
 // selectors
 export const getAllAds = ({ads}) => ads;
+export const getAdById = ({ads}, adId) => ads.find(ad => ad._id === adId);
 
 // actions
 const createActionName = actionName => `app/ads/${actionName}`;

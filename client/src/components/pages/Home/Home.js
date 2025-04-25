@@ -3,7 +3,7 @@ import Ads from "../../features/Ads/Ads";
 
 const Home = () => {
     return(
-        <div>
+        <div className="py-5">
             <Search />
             <Ads />
         </div>
