@@ -1,5 +1,5 @@
 import { Card, Col, Row, Image, Button } from "react-bootstrap";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, NavLink } from "react-router-dom";
 import { getAdById } from "../../../redux/adsReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { IMG_URL } from "../../../config";
@@ -30,7 +30,7 @@ const SingleAd = () => {
                             <div>{ad.author.phone}</div>
                         </Col>
                         <Col xs={4} className="d-flex flex-column flex-sm-row justify-content-end align-items-center">
-                            <Button variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>
+                            <Button as={NavLink} to={`/ads/edit/${id}`} variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>
                             <Button variant="outline-danger" size="sm" className="m-1 px-1">Remove</Button>
                         </Col>
                     </Row>

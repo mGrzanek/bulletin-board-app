@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { IMG_URL } from "../../../config";
 
 const AdItem = ({ _id, title, image, location }) => {
+    console.log('image AdItem: ', title, image);
     return(
         <Col xs={12} md={6} lg={4} className="pt-4">
             <Card className="p-3 shadow border-warning-subtle rounded">
