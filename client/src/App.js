@@ -20,7 +20,7 @@ const App = () => {
   return (
     <>
       <Header />
-      <Container className="py-3">
+      <Container className="pt-3 pb-5">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/ads/:id" element={<SingleAd />} />

@@ -15,15 +15,9 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     const [author, setAuthor] = useState('' || props._id);
     const [image, setImage] = useState(props.image || '');
     const [content, setContent] = useState('' || props.content);
-    const [showAlert, setShowAlert] = useState(false);
     const [status, setStatus] = useState('');
 
-    const onCloseAlert = () => {
-        setShowAlert(false);
-    }
-
     const handleSubmit = e => {
-        setShowAlert(false);
         e.preventDefault();
         console.log(title, author, image, content, location, price, published);
         if(title && author && content && location && price ){
@@ -43,13 +37,14 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
                 setStatus(status);
                 if (status === "success") navigate("/");
             });
-        } else setShowAlert(true);
+        } else setStatus("clientError");
     };
     
     return(
         <Form className="col-12 col-sm-8 col-md-4 mx-auto" onSubmit={handleSubmit}>
-            {(status === 'clientError' || showAlert) && <AlertMessage variant="danger" alertTitle="Invalid params" alertContent="Incorrectly filled out form fields" action={onCloseAlert} />}
-            {(status === 'serverError' || showAlert) && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error please try again" action={onCloseAlert} />}
+            {status === 'success' && <AlertMessage variant="success" alertTitle="Your article has been successfully added" />}
+            {status === 'clientError' && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields" />}
+            {status === 'serverError' && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
             <h2 className="my-4 text-warning">{formTitle}</h2>
             <Form.Group className="mb-3" controlId="formTitle">
                 <Form.Label>Title: </Form.Label>
