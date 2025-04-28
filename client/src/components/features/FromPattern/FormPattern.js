@@ -5,16 +5,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
 
-const FormPattern = ({action, actionTxt, ...props}) => {
+const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     const navigate = useNavigate();
     
     const [title, setTitle] = useState('' || props.title);
     const [price, setPrice] = useState('' || props.price);
-    const [published, setPublished] = useState('' || props.published);
+    const [published, setPublished] = useState(props.publicationDate ? new Date(props.publicationDate) : null);
     const [location, setLocation] = useState('' || props.location);
     const [author, setAuthor] = useState('' || props._id);
-    const [image, setImage] = useState('' || props.image);
-    const [content, setContent] = useState('', props.content);
+    const [image, setImage] = useState(props.image || '');
+    const [content, setContent] = useState('' || props.content);
     const [showAlert, setShowAlert] = useState(false);
     const [status, setStatus] = useState('');
 
@@ -26,14 +26,16 @@ const FormPattern = ({action, actionTxt, ...props}) => {
         setShowAlert(false);
         e.preventDefault();
         console.log(title, author, image, content, location, price, published);
-        if(title && author && image && content && location && price ){
+        if(title && author && content && location && price ){
             const formData = new FormData();
+            formData.append("id", props._id);
             formData.append("title", title);
             formData.append("price", price.toString());
             formData.append("location", location);
             formData.append("author", author);
             formData.append("publicationDate", published.toISOString());
             formData.append("content", content);
+            console.log('image edit', image);
             if (image) {
                 formData.append("image", image);
             }
@@ -48,7 +50,7 @@ const FormPattern = ({action, actionTxt, ...props}) => {
         <Form className="col-12 col-sm-8 col-md-4 mx-auto" onSubmit={handleSubmit}>
             {(status === 'clientError' || showAlert) && <AlertMessage variant="danger" alertTitle="Invalid params" alertContent="Incorrectly filled out form fields" action={onCloseAlert} />}
             {(status === 'serverError' || showAlert) && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error please try again" action={onCloseAlert} />}
-            <h2 className="my-4 text-warning">Add new ad</h2>
+            <h2 className="my-4 text-warning">{formTitle}</h2>
             <Form.Group className="mb-3" controlId="formTitle">
                 <Form.Label>Title: </Form.Label>
                 <Form.Control type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />

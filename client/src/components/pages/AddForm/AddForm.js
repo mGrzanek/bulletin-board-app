@@ -8,7 +8,7 @@ const AddForm = () => {
         return dispatch(addAdRequest(newAd));
     }
     return(
-        <FormPattern actionTxt="Add" action={add} />
+        <FormPattern formTitle="Add new ad" actionTxt="Add" action={add} />
     );
 }
 

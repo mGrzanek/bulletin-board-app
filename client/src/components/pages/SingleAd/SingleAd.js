@@ -22,7 +22,7 @@ const SingleAd = () => {
                 <Card.Text className="mb-0"><b>Location: </b> {ad.location}</Card.Text>
                 <Card.Text><b>Published: </b> {published}</Card.Text>
                 <Card.Text className={styles.txt}> {ad.content}</Card.Text>
-                <Card.Text>
+                <div className="mt-3">
                     <Row className=" d-flex justify-content-start align-items-center"> 
                         <Image className={styles.authorImg} src={IMG_URL + ad.author.avatar} roundedCircle />
                         <Col xs={4} className={clsx(styles.txt, "d-flex flex-column align-items-start text-muted")}>
@@ -34,7 +34,7 @@ const SingleAd = () => {
                             <Button variant="outline-danger" size="sm" className="m-1 px-1">Remove</Button>
                         </Col>
                     </Row>
-                </Card.Text>
+                </div>
             </Card.Body>
         </Card>
     );

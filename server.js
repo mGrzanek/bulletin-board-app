@@ -23,11 +23,19 @@ db.once('open', () => {
 db.on('error', err => console.log('Error ' + err));
 
 app.use(helmet());
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, '/public/uploads')));
 app.use(express.static(path.join(__dirname, '/client/build')));
-app.use(express.static(path.join(__dirname, '/public')));
+//app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(session({ secret: process.env.SESSION_SECRET, store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false }));
 
 app.use('/api', adsRouter);
