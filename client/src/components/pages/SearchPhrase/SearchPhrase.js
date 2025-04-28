@@ -15,7 +15,7 @@ const SearchPhrase = () => {
             <h2 className="text-center text-warning pt-4 pb-2">Search results: </h2>
             <Row className="d-flex pt-4">
                 {filteredAds.map(ad => <AdItem key={ad._id} {...ad} />)}
-                {filteredAds.length === 0 && <p className="text-center">Not found articles...</p>}
+                {filteredAds.length === 0 && <p className="text-center pb-5 mb-5">Not found articles...</p>}
             </Row>
         </>
     );
