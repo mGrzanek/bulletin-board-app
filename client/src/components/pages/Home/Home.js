@@ -1,10 +1,10 @@
-import Search from "../../views/Search/Search";
+import SearchForm from "../../features/SearchForm/SearchForm";
 import Ads from "../../features/Ads/Ads";
 
 const Home = () => {
     return(
-        <div className="py-5">
-            <Search />
+        <div className="py-4">
+            <SearchForm />
             <Ads />
         </div>
     );

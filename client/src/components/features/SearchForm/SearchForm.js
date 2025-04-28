@@ -7,7 +7,7 @@ const SearchForm = () => {
 
     return(
         <Form as={Col} className="mx-auto d-flex justify-content-center align-items-center p-2 col-10 col-md-6 ">
-            <Form.Control type="text" placeholder="Title" className="m-2" value={wantedTitle} onChange={e => setWantedTitle(e.target.value)}/>
+            <Form.Control type="text" placeholder="Search by title..." className="m-2" value={wantedTitle} onChange={e => setWantedTitle(e.target.value)}/>
             <Button as={NavLink} to={`/ads/search/${wantedTitle}`} variant="outline-warning" className=" text-uppercase fw-bold m-2">
                 Search
             </Button>
