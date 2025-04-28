@@ -5,7 +5,6 @@ import AdItem from "../../views/AdItem/AdItem";
 
 const Ads = () => {
     const ads = useSelector(getAllAds);
-    console.log(ads);
     return(
         <Row className="d-flex pt-4">
             {ads.map(ad => (

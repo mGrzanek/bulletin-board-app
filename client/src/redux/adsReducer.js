@@ -9,11 +9,13 @@ const createActionName = actionName => `app/ads/${actionName}`;
 const UPDATE_ADS = createActionName("UPDATE_ADS");
 const ADD_AD = createActionName("ADD_AD");
 const EDIT_AD = createActionName("EDIT_AD");
+const REMOVE_AD = createActionName("REMOVE_AD");
 
 // action creators
 export const updateAds = payload => ({ type: UPDATE_ADS, payload});
 export const addAd = payload => ({ type: ADD_AD, payload });
 export const editAd = payload => ({ type: EDIT_AD, payload });
+export const removeAd = payload => ({ type: REMOVE_AD, payload });
 
 export const fetchAds = () => {
     return(dispatch) => {
@@ -29,67 +31,91 @@ export const fetchAds = () => {
 }
 
 export const addAdRequest = (newAd) => {
-    return async (dispatch) => {
-      const options = {
-        method: "POST",
-        body: newAd,
-        credentials: "include",
-      };
-  
-      try {
-        const res = await fetch(`${API_URL}/api/ads`, options);
-        
-        if (res.status === 200) {
-            const data = await res.json();
-            const ad = data.message;
-            dispatch(addAd(ad));
-            return "success";
-        } else if (res.status === 400) return "clientError";
-        else return "serverError";
-      } catch (err) {
-        console.error({ message: err });
-        return "serverError";
-      }
+  return async (dispatch) => {
+    const options = {
+      method: "POST",
+      body: newAd,
+      credentials: "include",
     };
-  };
 
-  export const editAdRequest  = (editedAd, id) => {
-    return async (dispatch) => {
-      const options = {
-        method: "PUT",
-        body: editedAd,
-        credentials: "include"
-      };
-
-      try {
-        const res = await fetch(`${API_URL}/api/ads/${id}`, options);
-        if(res.status === 200){
+    try {
+      const res = await fetch(`${API_URL}/api/ads`, options);
+      
+      if (res.status === 200) {
           const data = await res.json();
           const ad = data.message;
-          dispatch(editAd(ad));
+          dispatch(addAd(ad));
           return "success";
-        } else if(res.status === 400) return "clientError"; 
-        else if(res.status === 404) return "clientError"; 
-        else return "serverError";
-      } catch (err) {
-        console.error({ message: err });
-        return "serverError";
-      }
+      } else if (res.status === 400) return "clientError";
+      else return "serverError";
+    } catch (err) {
+      console.error({ message: err });
+      return "serverError";
+    }
+  };
+};
+
+export const editAdRequest  = (editedAd, id) => {
+  return async (dispatch) => {
+    const options = {
+      method: "PUT",
+      body: editedAd,
+      credentials: "include"
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/ads/${id}`, options);
+      if(res.status === 200){
+        const data = await res.json();
+        const ad = data.message;
+        dispatch(editAd(ad));
+        return "success";
+      } else if(res.status === 400) return "clientError"; 
+      else if(res.status === 404) return "clientError"; 
+      else return "serverError";
+    } catch (err) {
+      console.error({ message: err });
+      return "serverError";
     }
   }
+}
+
+export const removeAdRequest = (adToRemoveId) => {
+  return async (dispatch) => { 
+    const options = {
+      method: "DELETE",
+      credentials: "include"
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/ads/${adToRemoveId}`, options);
+      if(res.status === 200){
+        dispatch(removeAd(adToRemoveId));
+        return "success";
+      } else if (res.status === 404) return "clientError";
+      else return "serverError";
+    }
+    catch(err) {
+      console.error({ message: err });
+      return "serverError";
+    }
+  }
+}
   
 // reducer
 const adsReducer = (statePart = [], action) => {
-    switch(action.type) {
-      case UPDATE_ADS:
-        return [...action.payload];
-      case ADD_AD:
-        return [ ...statePart, { ...action.payload}];
-      case EDIT_AD:
-        return statePart.map(ad => ad.id === action.payload.id ? {...ad, author: ad.author, ...action.payload} : ad);
-        default:
-        return statePart;
-    }
+  switch(action.type) {
+    case UPDATE_ADS:
+      return [...action.payload];
+    case ADD_AD:
+      return [ ...statePart, { ...action.payload}];
+    case EDIT_AD:
+      return statePart.map(ad => ad._id === action.payload.id ? {...ad, author: ad.author, ...action.payload} : ad);
+    case REMOVE_AD:
+      return statePart.filter(ad => ad._id !== action.payload);
+      default:
+      return statePart;
+  }
 }
 
 export default adsReducer;

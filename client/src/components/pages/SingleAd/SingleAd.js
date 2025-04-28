@@ -1,16 +1,21 @@
 import { Card, Col, Row, Image, Button } from "react-bootstrap";
-import { useParams, Navigate, NavLink } from "react-router-dom";
-import { getAdById } from "../../../redux/adsReducer";
+import { useParams, Navigate, NavLink, useNavigate } from "react-router-dom";
+import { getAdById, removeAdRequest } from "../../../redux/adsReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { IMG_URL } from "../../../config";
 import styles from './SingleAd.module.scss';
 import clsx from 'clsx';
+import ModalPage from "../../common/ModalPage/ModalPage";
 
 const SingleAd = () => {
     const {id} = useParams();
-    //const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const ad = useSelector(state => getAdById(state, id));
-    const published = ad.publicationDate.slice(0, 10);
+
+    const remove = () => {
+        console.log('remove id', id);
+        dispatch(removeAdRequest(id)); 
+    }
 
     if(!ad) return <Navigate to="/" />
     else return(
@@ -20,7 +25,7 @@ const SingleAd = () => {
                 <Card.Title className="text-warning pt-2">{ad.title}</Card.Title>
                 <Card.Text className="mb-0"><b>Price: </b> {ad.price}$</Card.Text>
                 <Card.Text className="mb-0"><b>Location: </b> {ad.location}</Card.Text>
-                <Card.Text><b>Published: </b> {published}</Card.Text>
+                <Card.Text><b>Published: </b> {ad.publicationDate.slice(0, 10)}</Card.Text>
                 <Card.Text className={styles.txt}> {ad.content}</Card.Text>
                 <div className="mt-3">
                     <Row className=" d-flex justify-content-start align-items-center"> 
@@ -31,7 +36,7 @@ const SingleAd = () => {
                         </Col>
                         <Col xs={4} className="d-flex flex-column flex-sm-row justify-content-end align-items-center">
                             <Button as={NavLink} to={`/ads/edit/${id}`} variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>
-                            <Button variant="outline-danger" size="sm" className="m-1 px-1">Remove</Button>
+                            <ModalPage action={remove} buttonName="Delete" content="This action will completely remove this post from the app. Are you sure you want to do this?" />
                         </Col>
                     </Row>
                 </div>
