@@ -25,8 +25,8 @@ const SingleAd = () => {
                 <Card.Title className="text-warning pt-2">{ad.title}</Card.Title>
                 <Card.Text className="mb-0"><b>Price: </b> {ad.price}$</Card.Text>
                 <Card.Text className="mb-0"><b>Location: </b> {ad.location}</Card.Text>
-                <Card.Text><b>Published: </b> {ad.publicationDate.slice(0, 10)}</Card.Text>
-                <Card.Text className={styles.txt}> {ad.content}</Card.Text>
+                <Card.Text className="mb-0"><b>Published: </b> {ad.publicationDate.slice(0, 10)}</Card.Text>
+                <Card.Text className="pb-2"> {ad.content}</Card.Text>
                 <div className="mt-3">
                     <Row className=" d-flex justify-content-start align-items-center"> 
                         <Image className={styles.authorImg} src={IMG_URL + ad.author.avatar} roundedCircle />

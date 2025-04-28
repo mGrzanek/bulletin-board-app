@@ -9,7 +9,7 @@ const ModalPage = ({action, buttonName, content}) => {
 
     return (
         <>
-            <Button variant="outline-danger" className="m-1" onClick={handleShow}>
+            <Button variant="outline-danger" size="sm" className="m-1" onClick={handleShow}>
                 {buttonName}
             </Button>
             <Modal show={show} onHide={handleClose}>

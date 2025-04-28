@@ -14,7 +14,7 @@ const EditForm = () => {
     };
     if(!adToEdit) return<Navigate to="/" />;
     else return(
-        <FormPattern formTitle="Edit ad" actionTxt="Edit" {...adToEdit} action={edit} oldImage={adToEdit.image} />
+        <FormPattern formTitle="Edit article" actionTxt="Edit" {...adToEdit} action={edit} oldImage={adToEdit.image} />
     );
 }
 
