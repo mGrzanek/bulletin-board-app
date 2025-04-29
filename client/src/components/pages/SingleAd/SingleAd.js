@@ -1,6 +1,7 @@
 import { Card, Col, Row, Image, Button } from "react-bootstrap";
-import { useParams, Navigate, NavLink, useNavigate } from "react-router-dom";
+import { useParams, Navigate, NavLink } from "react-router-dom";
 import { getAdById, removeAdRequest } from "../../../redux/adsReducer";
+import { getUser } from "../../../redux/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { IMG_URL } from "../../../config";
 import styles from './SingleAd.module.scss';
@@ -11,9 +12,9 @@ const SingleAd = () => {
     const {id} = useParams();
     const dispatch = useDispatch();
     const ad = useSelector(state => getAdById(state, id));
+    const user = useSelector(getUser);
 
     const remove = () => {
-        console.log('remove id', id);
         dispatch(removeAdRequest(id)); 
     }
 
@@ -35,8 +36,8 @@ const SingleAd = () => {
                             <div>{ad.author.phone}</div>
                         </Col>
                         <Col xs={4} className="d-flex flex-column flex-sm-row justify-content-end align-items-center">
-                            <Button as={NavLink} to={`/ads/edit/${id}`} variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>
-                            <ModalPage action={remove} buttonName="Delete" content="This action will completely remove this post from the app. Are you sure you want to do this?" />
+                            {user && <Button as={NavLink} to={`/ads/edit/${id}`} variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>}
+                            {user && <ModalPage action={remove} buttonName="Delete" content="This action will completely remove this post from the app. Are you sure you want to do this?" />}
                         </Col>
                     </Row>
                 </div>

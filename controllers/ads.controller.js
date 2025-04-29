@@ -79,16 +79,14 @@ exports.addNew = async(req, res) => {
 };
 
 exports.editOne = async(req, res) => {
-    let filePath = null;
     try {
         sanitize(req.body);
-        const {title, content, publicationDate, price, location} = req.body;
+        const {title, content, publicationDate, price, location, author} = req.body;
         const image = req.file;
-        const authorId = typeof req.body.author === 'object' ? req.body.author._id : req.body.author;
         const adToEdit = await Ad.findById(req.params.id);
-        filePath = image ? path.join(process.cwd(), 'public', 'uploads', image.filename) : null;
+        const filePath = image ? path.join(process.cwd(), 'public', 'uploads', image.filename) : null;
         if(adToEdit){
-            if(title && content && publicationDate && price && location && authorId){
+            if(title && content && publicationDate && price && location && author){
                 let imageFilename = null;
                 if(image) {
                     const oldFilePath = path.join(process.cwd(), 'public', 'uploads', adToEdit.image);
@@ -98,34 +96,33 @@ exports.editOne = async(req, res) => {
                         imageFilename = image.filename;
                         await removeFile(oldFilePath);
                     } else {
-                        if(filePath) await removeFile(filePath);
+                        await removeFile(filePath);
                         return res.status(400).json({ message: 'Invalid file'});
                     } 
                 } else imageFilename = adToEdit.image;
-                const authorObjectId = new mongoose.Types.ObjectId(authorId);
-                await adToEdit.updateOne({ $set: { title, content, publicationDate, image: imageFilename, price, location, author: authorObjectId } });
+                await adToEdit.updateOne({ $set: { title, content, publicationDate, image: imageFilename, price, location, author}});              
                 const updatedAd = await Ad.findById(adToEdit._id).populate('author');  
                 console.log('updatedAd', updatedAd)        ;
                 return res.json({ message: updatedAd });
             } else {
-                if(filePath) await removeFile(filePath);
+                await removeFile(filePath);
                 return res.status(400).json({ message: 'All params required' });
             }
         } else {
-            if(filePath) await removeFile(filePath);
+            await removeFile(filePath);
             return res.status(404).json({ message: 'Not found' });
         }
     }
     catch(error){
         if (error.name === 'ValidationError') {
-            if(filePath) await removeFile(filePath);
+            await removeFile(filePath);
             return res.status(400).json({
                 message: 'Invalid params',
                 errors: Object.values(error.errors).map(err => err.message)
             });
         }
-        if(filePath) await removeFile(filePath);
-        return res.status(500).json({ message: error });
+        await removeFile(filePath);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
