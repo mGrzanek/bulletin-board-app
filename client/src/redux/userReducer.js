@@ -7,22 +7,28 @@ export const getUser = ({user}) => user;
 const createActionName = actionName => `app/users/${actionName}`;
 const LOG_IN = createActionName("LOG_IN");
 const UPDATE_USER = createActionName("UPDATE_USER");
+const LOG_OUT = createActionName("LOG_OUT");
 
 // action creators
 export const logIn = payload => ({ type: LOG_IN, payload });
 export const updateUser = payload => ({ type: UPDATE_USER, payload });
+export const logOut = payload => ({ type: LOG_OUT, payload });
 
 export const fetchUser = () => {
-    return(dispatch) => {
-        try {
-            fetch(`${API_URL}/auth/user`)
-                .then(res => res.json())
-                .then(user => dispatch(updateUser(user.login, user.id)));
-        } 
-        catch(err){
-            console.log(err)
-        }
-    }
+    return (dispatch) => {
+        fetch(`${API_URL}/auth/user`, {
+            credentials: "include"
+          })
+            .then(res => res.json())
+            .then(user => {
+                if (user._id && user.login) {
+                    dispatch(updateUser(user));
+                } else return null;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    };
 }
 
 // reducer
@@ -32,6 +38,8 @@ const userReducer = (statePart = [], action) => {
             return action.payload;
         case UPDATE_USER:
             return action.payload;
+        case LOG_OUT:
+            return null;
         default:
             return statePart;
     }

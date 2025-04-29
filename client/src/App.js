@@ -13,15 +13,16 @@ import AddForm from "./components/pages/AddForm/AddForm";
 import EditForm from "./components/pages/EditForm/EditForm";
 import JoinForm from "./components/pages/JoinForm/JoinForm";
 import LoginForm from "./components/pages/LoginForm/LoginForm";
+import Logout from "./components/pages/Logout/Logout";
 import Footer from "./components/views/Footer/Footer";
 
 const App = () => {
   const dispatch = useDispatch();
-  const user = useSelector(getUser);
   useEffect(() => {
-    dispatch(fetchAds()); 
     dispatch(fetchUser());
+    dispatch(fetchAds()); 
   }, [dispatch]);
+  const user = useSelector(getUser);
   console.log(user);
   return (
     <>
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="/ads/edit/:id" element={<EditForm />} />
           <Route path="/register" element={<JoinForm />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path="/auth/logout" element={<Logout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>

@@ -12,6 +12,7 @@ const NavBar = () => {
                 <Nav>
                     <Nav.Link className="px-2" as={NavLink} to="/register">Sign up</Nav.Link>
                     <Nav.Link className="px-2" as={NavLink} to="/login">Sign in</Nav.Link>
+                    <Nav.Link className="px-2" as={NavLink} to="/auth/logout">Logout</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>

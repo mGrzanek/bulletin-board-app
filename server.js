@@ -36,7 +36,19 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-app.use(session({ secret: process.env.SESSION_SECRET, store: MongoStore.create(mongoose.connection), resave: false, saveUninitialized: false }));
+app.use(session({ 
+  secret: process.env.SESSION_SECRET, 
+  store: MongoStore.create(mongoose.connection), 
+  name: 'session_id', 
+  resave: false, 
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
+}));
 
 app.use('/api', adsRouter);
 app.use('/auth', authRouter);

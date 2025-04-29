@@ -67,7 +67,8 @@ exports.getUser = async (req, res) => {
     try {
         if(req.session.user && req.session.user.id){
             const user = await User.findById(req.session.user.id);
-            return res.json(user);
+            const { _id, login, avatar, phone } = user;
+            return res.json({ _id, login, avatar, phone });
         } else return res.json({ message: "You are not authorized"})
     } catch(error){
         return res.status(500).json({ message: error.message });
@@ -80,7 +81,17 @@ exports.logout = async (req, res) => {
         return res.json({ message: "You are logged out" });
     }
     else {
-        req.session.destroy();
-        return res.json({ message: "You are logged out" });
+        req.session.destroy(err => {
+            if (err) {
+                return res.status(500).json({ message: "Logout failed" });
+            }
+            res.clearCookie('session_id', {
+                path: '/',
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+            });
+            return res.json({ message: "You are logged out" });
+        });
     }
 }
