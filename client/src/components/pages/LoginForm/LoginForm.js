@@ -2,11 +2,13 @@ import { Form, Button, Spinner } from "react-bootstrap";
 import { useState } from "react";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
-import { logIn } from "../../../redux/userReducer";
+import { fetchUser } from "../../../redux/userReducer";
 import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState(null);
@@ -25,7 +27,8 @@ const LoginForm = () => {
             .then(res => {
                 if(res.status === 200) { 
                     setStatus("success");
-                    dispatch(logIn({ login }));
+                    dispatch(fetchUser());
+                    navigate("/")
                 }
                 else if(res.status === 400) setStatus("clientError");
                 else setStatus("serverError");
