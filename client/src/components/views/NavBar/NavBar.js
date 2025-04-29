@@ -15,6 +15,7 @@ const NavBar = () => {
                 <Nav>
                     {!user && <Nav.Link className="px-2" as={NavLink} to="/register">Sign up</Nav.Link>}
                     {!user && <Nav.Link className="px-2" as={NavLink} to="/login">Sign in</Nav.Link>}
+                    {user && <Nav.Link className="d-none d-sm-block px-2">Hello, <span className="text-warning fw-bold">{user.login}</span>!</Nav.Link>}
                     {user && <Nav.Link className="px-2" as={NavLink} to="/auth/logout">Logout</Nav.Link>}
                 </Nav>
             </Container>
