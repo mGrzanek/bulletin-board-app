@@ -13,7 +13,7 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     
     const [title, setTitle] = useState('' || props.title);
     const [price, setPrice] = useState('' || props.price);
-    const [published, setPublished] = useState(props.publicationDate ? new Date(props.publicationDate) : null);
+    const [published, setPublished] = useState(props.publicationDate ? new Date(props.publicationDate) : new Date());
     const [location, setLocation] = useState('' || props.location);
     const [author] = useState(user._id);
     const [image, setImage] = useState(null);
