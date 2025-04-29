@@ -1,5 +1,6 @@
-import { Form, Button, Spinner } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
+import Loader from "../../common/Loader/Loader";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
 import { fetchUser } from "../../../redux/userReducer";
@@ -42,9 +43,7 @@ const LoginForm = () => {
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}
             {status === "clientError" && <AlertMessage variant="danger" alertTitle="Incorrect data" alertContent="Login or password are incorrect..." />}
             {status === "serverError" && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
-            {status === "loading" && <Spinner className="d-block mx-auto" animation="border" variant="warning" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>}
+            {status === "loading" && <Loader />}
             <h2 className="my-4 text-warning">Sign in</h2>
             <Form.Group className="mb-3" controlId="formLogin">
                 <Form.Label>Login: </Form.Label>

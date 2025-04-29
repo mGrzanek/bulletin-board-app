@@ -1,11 +1,13 @@
 import { Button, Form } from "react-bootstrap";
+import AlertMessage from "../../common/AlertMessage/AlertMessage";
+import Loader from "../../common/Loader/Loader";
 import DatePicker from "react-datepicker";
 import PropTypes from 'prop-types';
 import { useState } from "react";
 import { useSelector } from 'react-redux';
 import { getUser } from "../../../redux/userReducer";
 import { useNavigate } from "react-router-dom";
-import AlertMessage from "../../common/AlertMessage/AlertMessage";
+
 
 const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     const navigate = useNavigate();
@@ -18,56 +20,64 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     const [author] = useState(user._id);
     const [image, setImage] = useState(null);
     const [content, setContent] = useState('' || props.content);
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState(null);
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(title, author, image, content, location, price, published);
-        if(title && author && content && location && price ){
-            const formData = new FormData();
-            //formData.append("id", props._id);
-            formData.append("title", title);
-            formData.append("price", price.toString());
-            formData.append("location", location);
-            formData.append("author", author);
-            formData.append("publicationDate", published.toISOString());
-            formData.append("content", content);
-            console.log('image edit', image);
-            console.log('image prev', props.image);
-            if (image) {
-                formData.append("image", image);
-            } else formData.append("image", props.image);
-            action(formData).then((status) => {
-                setStatus(status);
-                if (status === "success") navigate("/");
+      
+        if (title && author && content && location && price) {
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("price", price.toString());
+          formData.append("location", location);
+          formData.append("author", author);
+          formData.append("publicationDate", published.toISOString());
+          formData.append("content", content);
+      
+          if (image || props.image) {
+            formData.append("image", image || props.image);
+            setStatus("loading");
+      
+            action(formData).then(res => {
+              if (res.status === 200) {
+                setStatus("success");
+                navigate("/");
+              } else if (res.status === 400) setStatus("clientError");
+              else setStatus("serverError");
             });
-        } else setStatus("clientError");
+          } else {
+            setStatus("clientError");
+          }
+        } else {
+          setStatus("clientError");
+        }
     };
     
     if(!user) navigate("/");
     else return(
         <Form className="col-12 col-sm-8 col-md-4 mx-auto" onSubmit={handleSubmit}>
+            {status === "loading" && <Loader />}
             {status === 'success' && <AlertMessage variant="success" alertTitle="Success!" alertContent="Your article successfully added!" />}
-            {status === 'clientError' && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields" />}
+            {status === "clientError" && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields" />}
             {status === 'serverError' && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
             <h2 className="my-4 text-warning">{formTitle}</h2>
             <Form.Group className="mb-3" controlId="formTitle">
                 <Form.Label>Title: </Form.Label>
-                <Form.Control type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
+                <Form.Control type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formPublished">
                 <Form.Label>Published: </Form.Label>
                 <div>
-                    <DatePicker selected={published} onChange={(date) => setPublished(date)} />
+                    <DatePicker selected={published} onChange={(date) => setPublished(date)} required />
                 </div>
             </Form.Group>
             <Form.Group className="col-4 mb-3" controlId="formPrice">
                 <Form.Label>Price: </Form.Label>
-                <Form.Control type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
+                <Form.Control type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} required />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formLocation">
                 <Form.Label>Location: </Form.Label>
-                <Form.Control type="text" placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} />
+                <Form.Control type="text" placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} required />
             </Form.Group>
             <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>Image: </Form.Label>
@@ -75,7 +85,7 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
             </Form.Group>
             <Form.Group className="mb-3" controlId="formContent">
                 <Form.Label>Content: </Form.Label>
-                    <Form.Control as="textarea" rows={5} placeholder="Main content..." value={content} onChange={e => setContent(e.target.value)} />
+                    <Form.Control as="textarea" rows={5} placeholder="Main content..." value={content} onChange={e => setContent(e.target.value)} required />
             </Form.Group>
             <Button type="submit" variant="outline-warning">{actionTxt}</Button>
         </Form>

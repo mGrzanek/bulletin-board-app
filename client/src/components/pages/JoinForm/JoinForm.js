@@ -1,4 +1,5 @@
-import { Form, Button, Spinner } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
+import Loader from "../../common/Loader/Loader";
 import { useState } from "react";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
@@ -13,7 +14,6 @@ const JoinForm = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(login, password, phone, avatar);
         const fd = new FormData();
         fd.append('login', login);
         fd.append('password', password);
@@ -39,9 +39,7 @@ const JoinForm = () => {
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}
             {status === "clientError" && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields." />}
             {status === "serverError" && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
-            {status === "loading" && <Spinner className="d-block mx-auto" animation="border" variant="warning" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>}
+            {status === "loading" && <Loader />}
             <h2 className="my-4 text-warning">Sign up</h2>
             <Form.Group className="mb-3" controlId="formLogin">
                 <Form.Label>Login: </Form.Label>

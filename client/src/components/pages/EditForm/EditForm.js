@@ -1,5 +1,6 @@
 import { getAdById } from '../../../redux/adsReducer';
 import { useSelector, useDispatch } from 'react-redux';
+import { getUser } from '../../../redux/userReducer';
 import { useParams } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import FormPattern from './../../features/FromPattern/FormPattern';
@@ -12,10 +13,10 @@ const EditForm = () => {
     const edit = adToEdit => {
         return dispatch(editAdRequest(adToEdit, id));
     };
-    if(!adToEdit) return<Navigate to="/" />;
-    else return(
-        <FormPattern formTitle="Edit article" actionTxt="Edit" {...adToEdit} action={edit} oldImage={adToEdit.image} />
-    );
+    const user = useSelector(getUser);
+
+    if(!adToEdit || !user) return <Navigate to="/" />;
+    else return <FormPattern formTitle="Edit article" actionTxt="Edit" {...adToEdit} action={edit} oldImage={adToEdit.image} />;
 }
 
 export default EditForm;
