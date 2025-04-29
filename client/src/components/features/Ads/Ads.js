@@ -6,10 +6,11 @@ import AdItem from "../../views/AdItem/AdItem";
 const Ads = () => {
     const ads = useSelector(getAllAds);
     return(
-        <Row className="d-flex pt-4">
+        <Row className="d-flex py-4">
             {ads.map(ad => (
                 <AdItem key={ad._id} {...ad} />
             ))}
+            {ads.length === 0 && <p className="py-5">No ads...</p>}
         </Row>
     );
 }

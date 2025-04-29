@@ -1,6 +1,6 @@
 const initialState = {
     ads: [],
-    users: [],
+    user: null,
     requests: {},
 }
 
