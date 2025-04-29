@@ -14,7 +14,7 @@ const authMiddleware = async (req, res, next) => {
             } else res.status(401).json({ message: 'You are not authorized' });
         }
         catch(error){
-            return res.status(401).json({ message: 'Your are not authorized' });
+            return res.status(401).json({ message: 'You are not authorized' });
         }
     } else {
         if(req.session.user) next();

@@ -64,7 +64,14 @@ exports.login = async (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-    return res.json({ message: 'Logged' });
+    try {
+        if(req.session.user && req.session.user.id){
+            const user = await User.findById(req.session.user.id);
+            return res.json(user);
+        } else return res.json({ message: "You are not authorized"})
+    } catch(error){
+        return res.status(500).json({ message: error.message });
+    }
 }
 
 exports.logout = async (req, res) => {

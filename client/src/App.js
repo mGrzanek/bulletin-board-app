@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { fetchAds } from "./redux/adsReducer";
-import { useDispatch } from "react-redux";
+import { fetchUser, getUser } from "./redux/userReducer";
+import { useDispatch, useSelector } from "react-redux";
 import { Container } from "react-bootstrap";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/views/Header/Header";
@@ -16,7 +17,12 @@ import Footer from "./components/views/Footer/Footer";
 
 const App = () => {
   const dispatch = useDispatch();
-  useEffect(() => dispatch(fetchAds()), [dispatch]);
+  const user = useSelector(getUser);
+  useEffect(() => {
+    dispatch(fetchAds()); 
+    dispatch(fetchUser());
+  }, [dispatch]);
+  console.log(user);
   return (
     <>
       <Header />
