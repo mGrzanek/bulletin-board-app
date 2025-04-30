@@ -6,10 +6,11 @@ const removeFile = require('./../utils/removeFile');
 const Session = require('./../models/session.model');
 
 exports.register = async (req, res) => {
+    let filePath = null;
     try {
         const {login, password, phone} = req.body;
         const avatar = req.file;
-        const filePath = avatar ? path.join(process.cwd(), 'public', 'uploads', avatar.filename) : null;
+        if(avatar) filePath = path.join(process.cwd(), 'public', 'uploads', avatar.filename);
         if(login && typeof login === 'string' && password && typeof password === 'string' 
             && avatar && typeof avatar === 'object' && phone && typeof phone === 'string'){
             const fileType = await getImageFileType(avatar);
@@ -17,7 +18,7 @@ exports.register = async (req, res) => {
             if(imageMimeTypes.includes(fileType)){
                 const userWithLogin = await User.findOne({ login });
                 if(userWithLogin){
-                    await removeFile(filePath);
+                    if(filePath) await removeFile(filePath);
                     return res.status(409).json({ message: 'User with this login already exist'});
                 } else {
                     const newUser = await User.create({ 
@@ -26,16 +27,16 @@ exports.register = async (req, res) => {
                     return res.status(201).json({ message: `User created ${newUser.login}`});
                 }
             } else {
-                await removeFile(filePath);
+                if(filePath) await removeFile(filePath);
                 return res.status(400).json({ message: 'Invalid file' });
             }
         } else {
-            await removeFile(filePath);
+            if(filePath) await removeFile(filePath);
             return res.status(400).json({ message: 'Invalid params' });
         }
     }
     catch(error){
-        await removeFile(filePath);
+        if(filePath) await removeFile(filePath);
         return res.status(500).json({ message: error.message });
     }
 };

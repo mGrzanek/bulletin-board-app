@@ -79,12 +79,13 @@ exports.addNew = async(req, res) => {
 };
 
 exports.editOne = async(req, res) => {
+    let filePath = null;
     try {
         sanitize(req.body);
         const {title, content, publicationDate, price, location, author} = req.body;
         const image = req.file;
         const adToEdit = await Ad.findById(req.params.id);
-        const filePath = image ? path.join(process.cwd(), 'public', 'uploads', image.filename) : null;
+        if(image) filePath = path.join(process.cwd(), 'public', 'uploads', image.filename);
         if(adToEdit){
             if(title && content && publicationDate && price && location && author){
                 let imageFilename = null;
@@ -96,32 +97,31 @@ exports.editOne = async(req, res) => {
                         imageFilename = image.filename;
                         await removeFile(oldFilePath);
                     } else {
-                        await removeFile(filePath);
+                        if(filePath) await removeFile(filePath);
                         return res.status(400).json({ message: 'Invalid file'});
                     } 
                 } else imageFilename = adToEdit.image;
                 await adToEdit.updateOne({ $set: { title, content, publicationDate, image: imageFilename, price, location, author}});              
-                const updatedAd = await Ad.findById(adToEdit._id).populate('author');  
-                console.log('updatedAd', updatedAd)        ;
+                const updatedAd = await Ad.findById(adToEdit._id).populate('author');
                 return res.json({ message: updatedAd });
             } else {
-                await removeFile(filePath);
+                if(filePath) await removeFile(filePath);
                 return res.status(400).json({ message: 'All params required' });
             }
         } else {
-            await removeFile(filePath);
+            if(filePath) await removeFile(filePath);
             return res.status(404).json({ message: 'Not found' });
         }
     }
     catch(error){
         if (error.name === 'ValidationError') {
-            await removeFile(filePath);
+            if(filePath) await removeFile(filePath);
             return res.status(400).json({
                 message: 'Invalid params',
                 errors: Object.values(error.errors).map(err => err.message)
             });
         }
-        await removeFile(filePath);
+        if(filePath) await removeFile(filePath);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
@@ -131,7 +131,9 @@ exports.removeOne = async(req, res) => {
         const id = sanitize(req.params.id); 
         const adToRemove = await Ad.findById(id);
         if(adToRemove){
+            const filePath = path.join(process.cwd(), 'public', 'uploads', adToRemove.image.filename);
             await adToRemove.deleteOne();
+            if(filePath) await removeFile(filePath);
             return res.json({ message: 'OK' });
         } else return res.status(404).json({ message: 'Not found'}); 
     }

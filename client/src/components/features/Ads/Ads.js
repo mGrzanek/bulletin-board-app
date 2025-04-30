@@ -13,7 +13,6 @@ const Ads = () => {
 
     useEffect(() => {
         setStatusForm(actionStatus);
-        console.log(statusForm);
     }, [actionStatus]);
     
 
@@ -29,7 +28,7 @@ const Ads = () => {
                 {sortedAds.map(ad => (
                     <AdItem key={ad._id} {...ad} />
                 ))}
-                {sortedAds.length === 0 && <p className="py-5">No ads...</p>}
+                {sortedAds.length === 0 && <p className="text-center mt-2 mb-5 py-5">No ads found...</p>}
             </Row>
         </>
     );

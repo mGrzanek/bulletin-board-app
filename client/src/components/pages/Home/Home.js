@@ -11,7 +11,6 @@ const Home = () => {
 
      useEffect(() => {
         setStatusForm(actionStatus);
-        console.log(statusForm);
     }, [actionStatus]);
 
     return(

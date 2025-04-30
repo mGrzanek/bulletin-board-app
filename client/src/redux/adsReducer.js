@@ -25,7 +25,7 @@ export const fetchAds = () => {
       fetch(`${API_URL}/api/ads`)
         .then(res => res.json())
         .then(ads => {
-          dispatch(updateAds(ads));
+          dispatch(updateAds(Array.isArray(ads) ? ads : []));
           dispatch(updateStatus(null));
         })
     }

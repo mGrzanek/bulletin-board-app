@@ -6,7 +6,7 @@ const adsSchema = new mongoose.Schema({
     publicationDate: { type: Date, default: Date.now },
     image: { type: String, required: true },
     price: { type: Number, required: true },
-    location: { type: String, maxlength: 50, required: true },
+    location: { type: String, minlength: 3, maxlength: 30, required: true },
     author: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' }
 });
 
