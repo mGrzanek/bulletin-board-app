@@ -50,15 +50,15 @@ export const addAdRequest = (newAd) => {
       if (res.status === 200) {
           const ad = data.message;
           dispatch(addAd(ad));
-          dispatch(updateStatus(null));
-          return res.status;
+          dispatch(updateStatus("success"));
+          return res;
       } else if(res.status === 400) {
         dispatch(updateStatus("clientError"));
-        return res.status;
+        return res;
       }
       else {
         dispatch(updateStatus("serverError"));
-        return res.status;
+        return res;
       }
     } catch (err) {
       console.error({ message: err });
@@ -83,7 +83,8 @@ export const editAdRequest  = (editedAd, id) => {
         const data = await res.json();
         const ad = data.message;
         dispatch(editAd(ad));
-        dispatch(updateStatus(null));
+        dispatch(updateStatus("success"));
+        return res.status;
       } else if(res.status === 400) {
         dispatch(updateStatus("clientError")); 
         return res.status;
@@ -112,16 +113,24 @@ export const removeAdRequest = (adToRemoveId) => {
     };
 
     try {
+      dispatch(updateStatus("loading"));
       const res = await fetch(`${API_URL}/api/ads/${adToRemoveId}`, options);
       if(res.status === 200){
         dispatch(removeAd(adToRemoveId));
-        return "success";
-      } else if (res.status === 404) return "clientError";
-      else return "serverError";
+        dispatch(updateStatus("success"));
+      } else if (res.status === 404) {
+        dispatch(updateStatus("clientError"));
+        return res.status;
+      }
+      else {
+        dispatch(updateStatus("serverError"));
+        return res.status;
+      }
     }
     catch(err) {
       console.error({ message: err });
-      return "serverError";
+      dispatch(updateStatus("serverError"));
+      return 500;
     }
   }
 }

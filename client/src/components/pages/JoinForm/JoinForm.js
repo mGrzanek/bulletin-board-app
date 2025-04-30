@@ -3,8 +3,10 @@ import Loader from "../../common/Loader/Loader";
 import { useState } from "react";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
+import { useNavigate } from "react-router-dom";
 
 const JoinForm = () => {
+    const navigate = useNavigate();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [avatar, setAvatar] = useState(null);
@@ -26,7 +28,10 @@ const JoinForm = () => {
         setStatus("loading");
         fetch(`${API_URL}/auth/register`, options)
             .then(res => {
-                if(res.status === 201) setStatus("success");
+                if(res.status === 201) {
+                    setStatus("success");
+                    navigate("/");
+                }
                 else if(res.status === 400) setStatus("clientError");
                 else if(res.status === 409) setStatus("loginError");
                 else setStatus("serverError");

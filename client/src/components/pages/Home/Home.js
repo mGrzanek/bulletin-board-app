@@ -3,15 +3,22 @@ import SearchForm from "../../features/SearchForm/SearchForm";
 import Ads from "../../features/Ads/Ads";
 import { getStatus } from "../../../redux/statusReducer";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 const Home = () => {
-    const pending = useSelector(getStatus);
+    const actionStatus = useSelector(getStatus);
+     const [statusForm, setStatusForm] = useState(null);
+
+     useEffect(() => {
+        setStatusForm(actionStatus);
+        console.log(statusForm);
+    }, [actionStatus]);
 
     return(
         <div className="py-4">
-            {pending === "loading" && <Loader />}
-            {!pending &&<SearchForm />}
-            {!pending && <Ads />}
+            {statusForm === "loading" && <Loader />}
+            {statusForm !== "loading" &&<SearchForm />}
+            {statusForm !== "loading" && <Ads />}
         </div>
     );
 };

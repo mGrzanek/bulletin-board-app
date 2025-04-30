@@ -66,7 +66,6 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     else return(
         <Form className="col-12 col-sm-8 col-md-4 mx-auto" noValidate onSubmit={handleSubmit}>
             {statusForm === "loading" && <Loader />}
-            {statusForm === 'success' && <AlertMessage variant="success" alertTitle="Success!" alertContent="Your article successfully added!" />}
             {statusForm === "clientError" && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields" />}
             {statusForm === 'serverError' && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
             <h2 className="my-4 text-warning">{formTitle}</h2>
