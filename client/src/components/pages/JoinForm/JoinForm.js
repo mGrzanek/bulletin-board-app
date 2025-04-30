@@ -1,18 +1,20 @@
 import { Form, Button } from "react-bootstrap";
 import Loader from "../../common/Loader/Loader";
+import { getUser } from "../../../redux/userReducer";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const JoinForm = () => {
     const navigate = useNavigate();
+    const user = useSelector(getUser);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [avatar, setAvatar] = useState(null);
     const [phone, setPhone] = useState('');
     const [status, setStatus] = useState(null);
-
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -38,7 +40,8 @@ const JoinForm = () => {
             });
     };
     
-    return(
+    if(user) return <Navigate to="/" />;
+    else return(
         <Form className="col-12 col-sm-8 col-md-4 mx-auto" onSubmit={handleSubmit}>
             {status === "success" && <AlertMessage variant="success" alertTitle="Success!" alertContent="Your article has been successfully added." />}
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}

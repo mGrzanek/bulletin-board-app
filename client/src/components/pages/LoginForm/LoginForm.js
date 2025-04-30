@@ -4,12 +4,14 @@ import Loader from "../../common/Loader/Loader";
 import { API_URL } from "../../../config";
 import AlertMessage from "../../common/AlertMessage/AlertMessage";
 import { fetchUser } from "../../../redux/userReducer";
-import { useDispatch } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { getUser } from "../../../redux/userReducer";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Navigate } from "react-router-dom";
 
 const LoginForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const user = useSelector(getUser);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState(null);
@@ -37,7 +39,8 @@ const LoginForm = () => {
             .catch(err => setStatus("serverError"));
     };
 
-    return(
+    if(user) return <Navigate to="/" />;
+    else return(
         <Form className="col-12 col-sm-8 col-md-4 mx-auto py-2" onSubmit={handleSubmit}>
             {status === "success" && <AlertMessage variant="success" alertTitle="Success!" alertContent="You have been successfully logged in!" />}
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}

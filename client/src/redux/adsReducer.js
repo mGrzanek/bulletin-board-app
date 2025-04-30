@@ -19,20 +19,20 @@ export const editAd = payload => ({ type: EDIT_AD, payload });
 export const removeAd = payload => ({ type: REMOVE_AD, payload });
 
 export const fetchAds = () => {
-    return(dispatch) => {
-        try {
-            dispatch(updateStatus("loading"));
-            fetch(`${API_URL}/api/ads`)
-                .then(res => res.json())
-                .then(ads => {
-                  dispatch(updateAds(ads));
-                  dispatch(updateStatus(null));
-                })
-        }
-        catch(err){
-            console.log(err);
-        }
+  return(dispatch) => {
+    try {
+      dispatch(updateStatus("loading"));
+      fetch(`${API_URL}/api/ads`)
+        .then(res => res.json())
+        .then(ads => {
+          dispatch(updateAds(ads));
+          dispatch(updateStatus(null));
+        })
     }
+    catch(err){
+        console.log(err);
+    }
+  }
 }
 
 export const addAdRequest = (newAd) => {
