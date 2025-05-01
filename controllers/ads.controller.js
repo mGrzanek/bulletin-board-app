@@ -131,7 +131,8 @@ exports.removeOne = async(req, res) => {
         const id = sanitize(req.params.id); 
         const adToRemove = await Ad.findById(id);
         if(adToRemove){
-            const filePath = path.join(process.cwd(), 'public', 'uploads', adToRemove.image.filename);
+            const filePath = path.join(process.cwd(), 'public', 'uploads', adToRemove.image);
+            console.log('filepath', filePath);
             await adToRemove.deleteOne();
             if(filePath) await removeFile(filePath);
             return res.json({ message: 'OK' });

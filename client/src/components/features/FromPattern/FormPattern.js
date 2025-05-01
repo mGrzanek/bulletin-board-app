@@ -27,7 +27,6 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
 
    useEffect(() => {
     setStatusForm(actionStatus);
-    console.log(statusForm);
    }, [actionStatus]);
 
    useEffect(() => {
@@ -78,7 +77,7 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
             </Form.Group>
             <Form.Group className="col-4 mb-3" controlId="formPrice">
                 <Form.Label>Price: </Form.Label>
-                <Form.Control type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} isInvalid={validated && (isNaN(price) || price < 0) } required />
+                <Form.Control type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} isInvalid={validated && !price } required />
                 <Form.Control.Feedback type="invalid">
                     Price is required.
                 </Form.Control.Feedback>

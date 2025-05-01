@@ -37,6 +37,7 @@ exports.register = async (req, res) => {
     }
     catch(error){
         if(filePath) await removeFile(filePath);
+        console.log(error);
         return res.status(500).json({ message: error.message });
     }
 };

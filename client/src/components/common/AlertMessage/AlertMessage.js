@@ -1,4 +1,4 @@
-import { Alert } from "react-bootstrap";
+import { Alert, Col } from "react-bootstrap";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateStatus } from "../../../redux/statusReducer";
@@ -14,10 +14,12 @@ const AlertMessage = ({variant, alertTitle, alertContent}) => {
 
     if(show) { 
         return (
-        <Alert className="position-fixed w-25 top-20 z-2" variant={variant} onClose={closeAlert} dismissible>
-            <Alert.Heading>{alertTitle}</Alert.Heading>
-            <p>{alertContent}</p>
-        </Alert>
+            <Col className="d-flex justify-content-center">
+                <Alert className="position-fixed top-10 z-2" variant={variant} onClose={closeAlert} dismissible>
+                    <Alert.Heading>{alertTitle}</Alert.Heading>
+                    <p>{alertContent}</p>
+                </Alert>
+            </Col>
         );
     }
 }
