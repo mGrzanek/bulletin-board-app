@@ -4,7 +4,7 @@ This is fullstack app based on React, React-Redux, React-Router, Node.js, Expres
 The application consists of subpages:
 - Home with ads filter form and ads
 - Sign up with form to register
-- Sing in with form to log in to account
+- Sign in with login form
 - Add with for to insert new ad, only for logged users
 - Edit with form to edit ad, only for logged users
 
