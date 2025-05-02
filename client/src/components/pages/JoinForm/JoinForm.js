@@ -31,14 +31,14 @@ const JoinForm = () => {
             const avatarExt = avatar.name.split('.').pop().toLowerCase();
             if(login.length >= 3 && login.length <= 20 && phone.length >= 9 && phone.length <= 16) {
                 if (['jpg', 'jpeg', 'png', 'gif'].includes(avatarExt)) {
-                    const fd = new FormData();
-                    fd.append('login', login);
-                    fd.append('password', password);
-                    fd.append('phone', phone);
-                    fd.append('avatar', avatar);
+                    const formData = new FormData();
+                    formData.append('login', login);
+                    formData.append('password', password);
+                    formData.append('phone', phone);
+                    formData.append('avatar', avatar);
                     const options = {
                         method: "POST",
-                        body: fd
+                        body: formData
                     };
                     dispatch(updateStatus("loading"));
                     fetch(`${API_URL}/auth/register`, options)
