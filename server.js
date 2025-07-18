@@ -28,8 +28,8 @@ app.use('/uploads', (req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 }, express.static(path.join(__dirname, '/public/uploads')));
+
 app.use(express.static(path.join(__dirname, '/client/build')));
-//app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors({
