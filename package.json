@@ -6,6 +6,9 @@
     "start": "nodemon server.js"
   },
   "author": "Monika",
+  "engines": {
+    "node": "18.x"
+  },
   "license": "ISC",
   "description": "",
   "dependencies": {
