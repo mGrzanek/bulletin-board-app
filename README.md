@@ -1,16 +1,23 @@
 # bulletin board app
-This is fullstack app based on React, React-Redux, React-Router, Node.js, Express.js and MongoDB. Includes registration, login and post management functions with CRUD operations.
+This is a full-stack web app for posting and managing classified ads. It provides a smooth and secure experience for both anonymous and authenticated users. Logged users can add, edit and delete only their own ads. Routes that require user authorization are protected.
 
 The application consists of subpages:
-- Home with ads filter form and ads
-- Sign up with form to register
-- Sign in with login form
-- Add with for to insert new ad, only for logged users
-- Edit with form to edit ad, only for logged users
+- `/` – Home with ads filter form and ads.
+- `/ads/:id` – Detailed view of a single ad.
+- `/ads/search/:searchPhrase` – Filters ads by search phrase. 
+- `/ads/add` – Form to insert new ad, only for logged users.
+- `/ads/edit/:id` – Form to edit current ad, only for logged users.
+- `/register` – User registration form.
+- `/login` – User login form.
+- `/logout` – Logs out the current user.
 
-After clicking on "read me" button in the selected ad, the subpage of the single ad is displayed. 
 
-Additionally, logged in users can edit and delete only their own ads.
+https://bulletin-board-app-jpce.onrender.com/
+
+## Technologies Used
+
+- **Frontend:** React, Redux (with Thunk middleware),  React Router, React-Bootstrap & Bootstrap, SCSS Modules
+- **Backend:** Node.js, Express.js, MongoDB, Mongoose
 
 ## Configuration
 To run the application, you need an `.env` file with configuration data.
@@ -31,3 +38,7 @@ To start the application use:
 `npm start`
 or
 `yarn start`
+
+## Author
+
+Monika Grzanek
