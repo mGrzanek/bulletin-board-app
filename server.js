@@ -9,7 +9,6 @@ const path = require('path');
 const adsRouter = require('./routes/ads.routes');
 const authRouter = require('./routes/auth.routes');
 const app = express();
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -21,7 +20,6 @@ db.once('open', () => {
     app.use(session({ 
     secret: process.env.SESSION_SECRET, 
     store: MongoStore.create({
-      //mongoose.connection,
       mongoUrl: process.env.MONGODB_URI,
     }), 
     name: 'session_id', 

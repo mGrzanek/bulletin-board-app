@@ -12,7 +12,7 @@ The application consists of subpages:
 - `/logout` – Logs out the current user.
 
 
-https://bulletin-board-app-jpce.onrender.com/
+Project: https://bulletin-board-app-jpce.onrender.com/
 
 ## Technologies Used
 
