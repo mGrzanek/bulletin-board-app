@@ -1,4 +1,4 @@
-import { API_URL } from "../config";
+import { API_URL, IMG_URL } from "../config";
 import { updateStatus } from "./statusReducer";
 
 // selectors
@@ -19,21 +19,76 @@ export const editAd = payload => ({ type: EDIT_AD, payload });
 export const removeAd = payload => ({ type: REMOVE_AD, payload });
 
 export const fetchAds = () => {
-  return(dispatch) => {
+  return async (dispatch) => {
+    dispatch(updateStatus("loading"));
+
+    const cached = localStorage.getItem("ads");
+    const isOffline = !navigator.onLine; 
+
+    if (isOffline) {
+      console.warn("Offline mode detected — using cached ads");
+      if (cached) {
+        const offlineAds = JSON.parse(cached).map(ad => ({
+          ...ad,
+          image: ad.image?.startsWith("http") ? ad.image : `${window.location.origin}${ad.image}`,
+          author: ad.author
+            ? {
+                ...ad.author,
+                avatar: ad.author.avatar?.startsWith("http")
+                  ? ad.author.avatar
+                  : `${window.location.origin}${ad.author.avatar}`,
+              }
+            : null,
+        }));
+        dispatch(updateAds(offlineAds));
+      } else {
+        dispatch(updateAds([]));
+      }
+      dispatch(updateStatus("offline"));
+      return;
+    }
+
+
     try {
-      dispatch(updateStatus("loading"));
-      fetch(`${API_URL}/api/ads`)
-        .then(res => res.json())
-        .then(ads => {
-          dispatch(updateAds(Array.isArray(ads) ? ads : []));
-          dispatch(updateStatus(null));
-        })
+      const res = await fetch(`${API_URL}/api/ads`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const ads = await res.json();
+
+      if (Array.isArray(ads)) {
+        const normalizedAds = ads.map((ad) => ({
+          ...ad,
+          image: ad.image ? `${IMG_URL}/${ad.image}` : `${process.env.PUBLIC_URL}/images/attention.jpg`,
+         author: ad.author
+          ? (() => {
+              const { password, ...safeAuthor } = ad.author;
+              return {
+                ...safeAuthor,
+                avatar: safeAuthor.avatar
+                  ? `${IMG_URL}/${safeAuthor.avatar}`
+                  : `${process.env.PUBLIC_URL}/images/default-avatar.jpg`,
+              };
+            })()
+          : null,
+        }));
+        localStorage.setItem("ads", JSON.stringify(normalizedAds));
+        dispatch(updateAds(normalizedAds));
+      } else {
+        dispatch(updateAds([]));
+      }
+
+      dispatch(updateStatus(null));
+    } catch (err) {
+      console.warn("Fetch failed — using cached ads:", err);
+      if (cached) {
+        dispatch(updateAds(JSON.parse(cached)));
+      } else {
+        dispatch(updateAds([]));
+      }
+      dispatch(updateStatus("offline"));
     }
-    catch(err){
-        console.log(err);
-    }
-  }
-}
+  };
+};
 
 export const addAdRequest = (newAd) => {
   return async (dispatch) => {

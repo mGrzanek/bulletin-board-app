@@ -3,7 +3,6 @@ import { useParams, Navigate, NavLink } from "react-router-dom";
 import { getAdById, removeAdRequest } from "../../../redux/adsReducer";
 import { getUser } from "../../../redux/userReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { IMG_URL } from "../../../config";
 import styles from './SingleAd.module.scss';
 import clsx from 'clsx';
 import ModalPage from "../../common/ModalPage/ModalPage";
@@ -22,7 +21,7 @@ const SingleAd = () => {
     else return(
         <Card className="col-12 col-sm-10 col-md-7 m-4 p-3 p-md-4 mx-auto shadow border-warning-subtle rounded">
             <Card.Body>
-                <Card.Img src={IMG_URL + ad.image} className={styles.cardImage} />
+                <Card.Img src={ad.image} className={styles.cardImage} />
                 <Card.Title className="text-warning pt-2">{ad.title}</Card.Title>
                 <Card.Text className="mb-0"><b>Price: </b> {ad.price}$</Card.Text>
                 <Card.Text className="mb-0"><b>Location: </b> {ad.location}</Card.Text>
@@ -30,7 +29,7 @@ const SingleAd = () => {
                 <Card.Text className="pb-2"> {ad.content}</Card.Text>
                 <div className="mt-3">
                     <Row className=" d-flex justify-content-start align-items-center"> 
-                        <Image className={styles.authorImg} src={IMG_URL + ad.author.avatar} roundedCircle />
+                        <Image className={styles.authorImg} src={ad.author.avatar} roundedCircle />
                         <Col xs={4} className={clsx(styles.txt, "d-flex flex-column align-items-start text-muted")}>
                             <div>{ad.author.login}</div>
                             <div>{ad.author.phone}</div>

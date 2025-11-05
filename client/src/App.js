@@ -20,8 +20,12 @@ const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchUser());
-    dispatch(fetchAds()); 
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchAds());
+  }, [dispatch]);
+  
   return (
     <>
       <Header />

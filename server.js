@@ -40,7 +40,6 @@ db.once('open', () => {
     next();
   }, express.static(path.join(__dirname, '/public/uploads')));
 
-  app.use(express.static(path.join(__dirname, '/client/build')));
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cors({
@@ -51,6 +50,7 @@ db.once('open', () => {
   app.use('/api', adsRouter);
   app.use('/auth', authRouter);
 
+  app.use(express.static(path.join(__dirname, '/client/build')));
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/client/build/index.html'));
   });
