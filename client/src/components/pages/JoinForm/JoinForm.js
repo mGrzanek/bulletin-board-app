@@ -18,6 +18,7 @@ const JoinForm = () => {
     const [avatar, setAvatar] = useState(null);
     const [phone, setPhone] = useState('');
     const [status, setStatus] = useState(null);
+    const [isOffline, setIsOffline] = useState(false);
     const [validated, setValidated] = useState(false);
 
     useEffect(() => {
@@ -40,8 +41,9 @@ const JoinForm = () => {
                         method: "POST",
                         body: formData
                     };
-                    dispatch(updateStatus("loading"));
-                    fetch(`${API_URL}/auth/register`, options)
+                    if(status !== 'offline'){
+                        dispatch(updateStatus("loading"));
+                        fetch(`${API_URL}/auth/register`, options)
                         .then(res => {
                             if(res.status === 201) {
                                 dispatch(updateStatus("success"));
@@ -51,6 +53,9 @@ const JoinForm = () => {
                             else if(res.status === 409) dispatch(updateStatus("loginError"));
                             else setStatus("serverError");
                         });
+                    } else {
+                        dispatch(setIsOffline(true));
+                    }
                 } else dispatch(updateStatus("clientError"));
             } else dispatch(updateStatus("clientError"));
         } else dispatch(updateStatus("clientError"));
@@ -63,6 +68,7 @@ const JoinForm = () => {
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}
             {status === "clientError" && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields." />}
             {status === "serverError" && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
+            {isOffline && <AlertMessage variant="danger" alertTitle="Offine" alertContent="Action available only online" />}
             {status === "loading" && <Loader />}
             <h2 className="my-4 text-warning">Sign up</h2>
             <Form.Group className="mb-3" controlId="formLogin">

@@ -5,29 +5,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Navigate } from "react-router-dom";
 import Loader from "../../common/Loader/Loader";
 import { getUser } from "../../../redux/userReducer";
+import { getStatus, updateStatus } from "../../../redux/statusReducer";
+import AlertMessage from "../../common/AlertMessage/AlertMessage";
 
 const Logout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(getUser);
-    const [status, setStatus] = useState(null);
+    const status = useSelector(getStatus);
 
     useEffect(() => {
         const options = {
             method: "DELETE",
             credentials: "include"
         }
-        setStatus("loading");
-        fetch(`${API_URL}/auth/logout`, options)
-            .then(() => {
-            dispatch(logOut());
-            setStatus(null);
-            navigate("/");
-        });
+        if(status !== "offline") {
+            dispatch(updateStatus("loading"));
+            fetch(`${API_URL}/auth/logout`, options)
+                .then(() => {
+                dispatch(logOut());
+                dispatch(updateStatus(null));
+                navigate("/");
+            });
+        } else return navigate("/")
     }, [dispatch]);
 
     if(!user) return <Navigate to="/" />
-    else return status === "loading" ? <Loader /> : null;
+    else return (
+        <>
+            {status === "loading" && <Loader /> }
+            {status === "offline" && <AlertMessage variant="danger" alertTitle="Offine" alertContent="Action available only online" />}
+        </>
+    )
 };
 
 export default Logout;

@@ -23,6 +23,7 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
     const [content, setContent] = useState(props.content || '');
     const [statusForm, setStatusForm] = useState(null);
     const [imageError, setImageError] = useState(false);
+    const [isOffline, setIsOffline] = useState(false);
    
 
    useEffect(() => {
@@ -50,10 +51,12 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
                     setImageError(true)
                     setStatusForm("clientError");
                 } else  {
-                    setImageError(false);
-                    formData.append("image", image || props.image);
-                    action(formData);
-                    navigate("/");
+                    if(actionStatus !== "offline") {
+                        setImageError(false);
+                        formData.append("image", image || props.image);
+                        action(formData);
+                        navigate("/");
+                    } else setIsOffline(true);
                 } 
             } else setStatusForm("clientError")   ;
         } else {
@@ -67,6 +70,7 @@ const FormPattern = ({action, formTitle, actionTxt, ...props}) => {
             {statusForm === "loading" && <Loader />}
             {statusForm === "clientError" && <AlertMessage variant="danger" alertTitle="No enough data" alertContent="You have to fill all the fields" />}
             {statusForm === 'serverError' && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
+            {isOffline && <AlertMessage variant="danger" alertTitle="Offine" alertContent="Action available only online" />}
             <h2 className="my-4 text-warning">{formTitle}</h2>
             <Form.Group className="mb-3" controlId="formTitle">
                 <Form.Label>Title: </Form.Label>

@@ -17,11 +17,12 @@ const LoginForm = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState(null);
+    const [isOffline, setIsOffline] = useState(false);
     const [validated, setValidated] = useState(false);
 
      useEffect(() => {
-            setStatus(actionStatus);
-        }, [actionStatus]);
+        setStatus(actionStatus);
+    }, [actionStatus]);
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -34,8 +35,9 @@ const LoginForm = () => {
                 }, 
                 body: JSON.stringify({ login, password })
             };
-            dispatch(updateStatus("loading"));
-            fetch(`${API_URL}/auth/login`, options)
+            if(status !== "offline"){
+                dispatch(updateStatus("loading"));
+                fetch(`${API_URL}/auth/login`, options)
                 .then(res => {
                     if(res.status === 200) { 
                         dispatch(updateStatus("success"));
@@ -46,6 +48,7 @@ const LoginForm = () => {
                     else dispatch(updateStatus("serverError"));
                 })
                 .catch(err => dispatch(updateStatus("serverError")));
+            } else setIsOffline(true);
         }
     };
 
@@ -56,6 +59,7 @@ const LoginForm = () => {
             {status === "loginError" && <AlertMessage variant="warning" alertTitle="Login is already in use" alertContent="You have to use other login." />}
             {status === "clientError" && <AlertMessage variant="danger" alertTitle="Incorrect data" alertContent="Login or password are incorrect..." />}
             {status === "serverError" && <AlertMessage variant="danger" alertTitle="Something went wrong..." alertContent="Unexpected error... Please try again." />}
+            {isOffline && <AlertMessage variant="danger" alertTitle="Offine" alertContent="Action available only online" />}
             {status === "loading" && <Loader />}
             <h2 className="my-4 text-warning">Sign in</h2>
             <Form.Group className="mb-3" controlId="formLogin">

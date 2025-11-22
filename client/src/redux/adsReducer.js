@@ -20,72 +20,28 @@ export const removeAd = payload => ({ type: REMOVE_AD, payload });
 
 export const fetchAds = () => {
   return async (dispatch) => {
-    dispatch(updateStatus("loading"));
-
     const cached = localStorage.getItem("ads");
-    const isOffline = !navigator.onLine; 
-
-    if (isOffline) {
-      console.warn("Offline mode detected — using cached ads");
-      if (cached) {
-        const offlineAds = JSON.parse(cached).map(ad => ({
-          ...ad,
-          image: ad.image?.startsWith("http") ? ad.image : `${window.location.origin}${ad.image}`,
-          author: ad.author
-            ? {
-                ...ad.author,
-                avatar: ad.author.avatar?.startsWith("http")
-                  ? ad.author.avatar
-                  : `${window.location.origin}${ad.author.avatar}`,
-              }
-            : null,
-        }));
-        dispatch(updateAds(offlineAds));
-      } else {
-        dispatch(updateAds([]));
-      }
-      dispatch(updateStatus("offline"));
-      return;
-    }
-
 
     try {
       const res = await fetch(`${API_URL}/api/ads`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error("Offline or server error");
+      const data = await res.json();
 
-      const ads = await res.json();
-
-      if (Array.isArray(ads)) {
-        const normalizedAds = ads.map((ad) => ({
-          ...ad,
-          image: ad.image ? `${IMG_URL}/${ad.image}` : `${process.env.PUBLIC_URL}/images/attention.jpg`,
-         author: ad.author
-          ? (() => {
-              const { password, ...safeAuthor } = ad.author;
-              return {
-                ...safeAuthor,
-                avatar: safeAuthor.avatar
-                  ? `${IMG_URL}/${safeAuthor.avatar}`
-                  : `${process.env.PUBLIC_URL}/images/default-avatar.jpg`,
-              };
-            })()
+      const normalizedAds = data.map(ad => ({
+        ...ad,
+        image: ad.image ? `${IMG_URL}/${ad.image}` : "/images/attention.jpg",
+        author: ad.author
+          ? { ...ad.author, avatar: ad.author.avatar?.startsWith("http") ? ad.author.avatar : `${IMG_URL}/${ad.author.avatar}` }
           : null,
-        }));
-        localStorage.setItem("ads", JSON.stringify(normalizedAds));
-        dispatch(updateAds(normalizedAds));
-      } else {
-        dispatch(updateAds([]));
-      }
+      }));
 
+      localStorage.setItem("ads", JSON.stringify(normalizedAds));
+      dispatch(updateAds(normalizedAds));
       dispatch(updateStatus(null));
-    } catch (err) {
-      console.warn("Fetch failed — using cached ads:", err);
-      if (cached) {
-        dispatch(updateAds(JSON.parse(cached)));
-      } else {
-        dispatch(updateAds([]));
-      }
+    } catch {
       dispatch(updateStatus("offline"));
+      if (cached) dispatch(updateAds(JSON.parse(cached)));
+      else dispatch(updateAds([]));
     }
   };
 };

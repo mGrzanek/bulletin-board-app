@@ -1,21 +1,27 @@
-// selectors
-export const getStatus = ({status}) => status;
+import initialState from "./initialState";
 
-// actions
-const createActionName = actionName => `app/requests/${actionName}`;
-const UPDATE_STATUS = createActionName("UPDATE_STATUS");
+// selectors
+export const getStatus = ({ status }) => status;
+
+// action types
+const UPDATE_STATUS = "app/status/UPDATE_STATUS";
 
 // action creators
-export const updateStatus = payload => ({ type: UPDATE_STATUS, payload });
+export const updateStatus = (payload) => ({ type: UPDATE_STATUS, payload });
 
 // reducer
-const statusReducer = (statePart = [], action) => {
-    switch(action.type) {
-        case UPDATE_STATUS:
-            return action.payload;
-        default:
-            return statePart;
-    }
-}
+const statusReducer = (statePart = initialState.status, action) => {
+  switch (action.type) {
+    case UPDATE_STATUS:
+      if (action.payload) {
+        localStorage.setItem("status", action.payload);
+      } else {
+        localStorage.removeItem("status");
+      }
+      return action.payload;
+    default:
+      return statePart;
+  }
+};
 
 export default statusReducer;

@@ -1,57 +1,59 @@
-import { API_URL } from "../config"
+import { API_URL } from "../config";
+import { updateStatus } from "./statusReducer";
 
-// selectors
-export const getUser = ({user}) => user;
+export const getUser = ({ user }) => user;
 
-// actions
-const createActionName = actionName => `app/users/${actionName}`;
-const UPDATE_USER = createActionName("UPDATE_USER");
-const LOG_OUT = createActionName("LOG_OUT");
+const UPDATE_USER = "app/users/UPDATE_USER";
+const LOG_OUT = "app/users/LOG_OUT";
 
-// action creators
-export const updateUser = payload => ({ type: UPDATE_USER, payload });
-export const logOut = payload => ({ type: LOG_OUT, payload });
+export const updateUser = (payload) => ({ type: UPDATE_USER, payload });
+export const logOut = () => ({ type: LOG_OUT });
 
 export const fetchUser = () => {
-  return (dispatch) => {
+  return async (dispatch) => {
+    const cachedUser = localStorage.getItem("user");
+
     try {
-      fetch(`${API_URL}/auth/user`, { credentials: "include" })
-        .then((res) => res.json())
-        .then((user) => {
-          if (user._id && user.login) {
-            localStorage.setItem("user", JSON.stringify(user));
-            dispatch(updateUser(user));
-          } else {
-            dispatch(updateUser(null));
-          }
-        })
-        .catch((err) => {
-          console.warn("Offline - getting user from localStorage", err);
-          const cachedUser = localStorage.getItem("user");
-          if (cachedUser) {
-            dispatch(updateUser(JSON.parse(cachedUser)));
-          } else {
-            dispatch(updateUser(null));
-          }
-        });
-    } catch (err) {
-      console.error("Unexpected fetchUser error:", err);
-      dispatch(updateUser(null));
+      const res = await fetch(`${API_URL}/auth/user`, {
+        credentials: "include",
+        cache: "no-store"
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem("user");
+        dispatch(updateUser(null));
+        dispatch(updateStatus(null));
+        return;
+      }
+
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+
+      localStorage.setItem("user", JSON.stringify(data));
+      dispatch(updateUser(data));
+      dispatch(updateStatus(null));
+    } catch {
+      dispatch(updateStatus("offline"));
+      if (cachedUser) {
+        dispatch(updateUser(JSON.parse(cachedUser)));
+      } else {
+        dispatch(updateUser(null));
+      }
     }
   };
 };
 
-
-// reducer
 const userReducer = (statePart = [], action) => {
-    switch(action.type) {
-        case UPDATE_USER:
-            return action.payload;
-        case LOG_OUT:
-            return null;
-        default:
-            return statePart;
-    }
-}
+  switch (action.type) {
+    case UPDATE_USER:
+      return action.payload;
+    case LOG_OUT:
+      localStorage.removeItem("user");
+      return null;
+    default:
+      return statePart;
+  }
+};
 
 export default userReducer;

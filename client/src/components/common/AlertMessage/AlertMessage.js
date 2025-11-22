@@ -1,21 +1,22 @@
 import { Alert, Col } from "react-bootstrap";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateStatus } from "../../../redux/statusReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { updateStatus, getStatus } from "../../../redux/statusReducer";
 
 const AlertMessage = ({variant, alertTitle, alertContent}) => {
     const [show, setShow] = useState(true);
+    const status = useSelector(getStatus);
     const dispatch = useDispatch();
 
     const closeAlert = () => {
         setShow(false);
-        dispatch(updateStatus(null));
+        if(status !== "offline") dispatch(updateStatus(null));
     };
 
     if(show) { 
         return (
             <Col className="d-flex justify-content-center">
-                <Alert className="position-fixed w-25 top-10 z-2" variant={variant} onClose={closeAlert} dismissible>
+                <Alert className="position-fixed w-50 top-10 z-2" variant={variant} onClose={closeAlert} dismissible>
                     <Alert.Heading>{alertTitle}</Alert.Heading>
                     <p>{alertContent}</p>
                 </Alert>
