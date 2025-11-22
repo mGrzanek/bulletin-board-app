@@ -1,18 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
 
-const ModalPage = ({action, buttonName, content}) => {
+const ModalPage = ({action, buttonName, content, autoShow = false, hideTrigger = false }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    useEffect(() => {
+        if (autoShow) {
+        setShow(true);
+        }
+    }, [autoShow]);
+
     return (
         <>
-            <Button variant="outline-danger" size="sm" className="m-1" onClick={handleShow}>
+            {!hideTrigger && <Button variant="outline-danger" size="sm" className="m-1" onClick={handleShow}>
                 {buttonName}
-            </Button>
-            <Modal show={show} onHide={handleClose}>
+            </Button>}
+            <Modal show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Are you sure?</Modal.Title>
                 </Modal.Header>

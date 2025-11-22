@@ -16,6 +16,7 @@ import JoinForm from "./components/pages/JoinForm/JoinForm";
 import LoginForm from "./components/pages/LoginForm/LoginForm";
 import Logout from "./components/pages/Logout/Logout";
 import NotFound from "./components/pages/NotFound/NotFound";
+import Installer from "./components/features/Installer/Installer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -99,6 +100,7 @@ const App = () => {
         </Routes>
       </Container>
       <Footer />
+      <Installer />
     </>
   );
 };
