@@ -18,21 +18,17 @@ export const fetchUser = () => {
         credentials: "include",
         cache: "no-store"
       });
-
-      if (res.status === 401) {
+      if(res.ok) {
+        const data = await res.json();
+        localStorage.setItem("user", JSON.stringify(data));
+        dispatch(updateUser(data));
+        dispatch(updateStatus(null));
+      } else if (res.status === 401) {
         localStorage.removeItem("user");
         dispatch(updateUser(null));
         dispatch(updateStatus(null));
         return;
-      }
-
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-
-      localStorage.setItem("user", JSON.stringify(data));
-      dispatch(updateUser(data));
-      dispatch(updateStatus(null));
+      } else dispatch(updateStatus("serverError"));
     } catch {
       dispatch(updateStatus("offline"));
       if (cachedUser) {

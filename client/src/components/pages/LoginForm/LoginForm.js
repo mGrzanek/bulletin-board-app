@@ -43,8 +43,7 @@ const LoginForm = () => {
                         dispatch(updateStatus("success"));
                         dispatch(fetchUser());
                         navigate("/")
-                    }
-                    else if(res.status === 400) dispatch(updateStatus("clientError"));
+                    } else if(res.status === 400) dispatch(updateStatus("clientError"));
                     else dispatch(updateStatus("serverError"));
                 })
                 .catch(err => dispatch(updateStatus("serverError")));

@@ -51,7 +51,7 @@ const JoinForm = () => {
                             }
                             else if(res.status === 400) dispatch(updateStatus("clientError"));
                             else if(res.status === 409) dispatch(updateStatus("loginError"));
-                            else setStatus("serverError");
+                            else dispatch(updateStatus("serverError"));
                         });
                     } else {
                         dispatch(setIsOffline(true));

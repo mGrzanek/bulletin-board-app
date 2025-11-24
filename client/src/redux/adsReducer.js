@@ -21,27 +21,39 @@ export const removeAd = payload => ({ type: REMOVE_AD, payload });
 export const fetchAds = () => {
   return async (dispatch) => {
     const cached = localStorage.getItem("ads");
-
     try {
       const res = await fetch(`${API_URL}/api/ads`);
-      if (!res.ok) throw new Error("Offline or server error");
-      const data = await res.json();
 
-      const normalizedAds = data.map(ad => ({
-        ...ad,
-        image: ad.image ? `${IMG_URL}/${ad.image}` : "/images/attention.jpg",
-        author: ad.author
-          ? { ...ad.author, avatar: ad.author.avatar?.startsWith("http") ? ad.author.avatar : `${IMG_URL}/${ad.author.avatar}` }
-          : null,
-      }));
+      if (res.ok) {
+        const data = await res.json();
 
-      localStorage.setItem("ads", JSON.stringify(normalizedAds));
-      dispatch(updateAds(normalizedAds));
-      dispatch(updateStatus(null));
+        const normalizedAds = data.map(ad => ({
+          ...ad,
+          image: ad.image
+            ? `${IMG_URL}/${ad.image}`
+            : `${API_URL}/images/attention.jpg`,
+          author: ad.author
+            ? {
+                ...ad.author,
+                avatar: ad.author.avatar?.startsWith("http")
+                  ? ad.author.avatar
+                  : `${IMG_URL}/${ad.author.avatar}`,
+              }
+            : null,
+        }));
+
+        localStorage.setItem("ads", JSON.stringify(normalizedAds));
+        dispatch(updateAds(normalizedAds));
+        dispatch(updateStatus(null));
+      } else dispatch(updateStatus("serverError"));
     } catch {
       dispatch(updateStatus("offline"));
-      if (cached) dispatch(updateAds(JSON.parse(cached)));
-      else dispatch(updateAds([]));
+
+      if (cached) {
+        dispatch(updateAds(JSON.parse(cached)));
+      } else {
+        dispatch(updateAds([]));
+      }
     }
   };
 };

@@ -25,7 +25,7 @@ const Installer = () => {
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
     };
-  }, []);
+  }, [isIOS, isStandalone]);
 
   const installApp = async () => {
     if (!deferredPrompt) return;

@@ -20,7 +20,7 @@ const ModalPage = ({action, buttonName, content, autoShow = false, hideTrigger =
             </Button>}
             <Modal show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Are you sure?</Modal.Title>
+                    <Modal.Title> {autoShow ? <span>Install app</span> : <span>Are you sure?</span>}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{content}</Modal.Body>
                 <Modal.Footer>
