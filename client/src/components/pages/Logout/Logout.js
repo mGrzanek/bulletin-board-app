@@ -24,10 +24,12 @@ const Logout = () => {
             fetch(`${API_URL}/auth/logout`, options)
                 .then(() => {
                 dispatch(logOut());
-                dispatch(updateStatus(null));
+                dispatch(updateStatus("success"));
                 navigate("/");
             });
-        } else return navigate("/")
+        } else setTimeout(() => {
+            return navigate("/")
+        }, 2000) ;
     }, [dispatch]);
 
     if(!user) return <Navigate to="/" />
