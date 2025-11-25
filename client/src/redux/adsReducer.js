@@ -18,30 +18,28 @@ export const addAd = payload => ({ type: ADD_AD, payload });
 export const editAd = payload => ({ type: EDIT_AD, payload });
 export const removeAd = payload => ({ type: REMOVE_AD, payload });
 
+const normalizeAd = (ad) => ({
+  ...ad,
+  version: Date.now(), 
+  image: ad.image ? `${IMG_URL}/${ad.image}` : `${API_URL}/images/attention.jpg`,
+  author: ad.author
+    ? {
+        ...ad.author,
+        avatar: ad.author.avatar?.startsWith("http")
+          ? ad.author.avatar
+          : `${IMG_URL}/${ad.author.avatar}`,
+      }
+    : null,
+});
+
 export const fetchAds = () => {
   return async (dispatch) => {
     const cached = localStorage.getItem("ads");
     try {
       const res = await fetch(`${API_URL}/api/ads`);
-
       if (res.ok) {
         const data = await res.json();
-
-        const normalizedAds = data.map(ad => ({
-          ...ad,
-          image: ad.image
-            ? `${IMG_URL}/${ad.image}`
-            : `${API_URL}/images/attention.jpg`,
-          author: ad.author
-            ? {
-                ...ad.author,
-                avatar: ad.author.avatar?.startsWith("http")
-                  ? ad.author.avatar
-                  : `${IMG_URL}/${ad.author.avatar}`,
-              }
-            : null,
-        }));
-
+        const normalizedAds = data.map(normalizeAd);
         localStorage.setItem("ads", JSON.stringify(normalizedAds));
         dispatch(updateAds(normalizedAds));
         dispatch(updateStatus(null));
@@ -72,7 +70,10 @@ export const addAdRequest = (newAd) => {
       const data = await res.json(); 
       if (res.status === 200) {
           const ad = data.message;
-          dispatch(addAd(ad));
+          const normalizedAd = normalizeAd(ad);
+          dispatch(addAd(normalizedAd));
+          const currentAds = JSON.parse(localStorage.getItem("ads") || "[]");
+          localStorage.setItem("ads", JSON.stringify([ ...currentAds, normalizedAd ]));
           dispatch(updateStatus("success"));
           return res;
       } else if(res.status === 400) {
@@ -85,14 +86,14 @@ export const addAdRequest = (newAd) => {
       }
     } catch (err) {
       console.error({ message: err });
-      dispatch(updateStatus("serverError"));
-      return 500;
+      dispatch(updateStatus("offline"));
+      return;
     }
   };
 };
 
 export const editAdRequest  = (editedAd, id) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     const options = {
       method: "PUT",
       body: editedAd,
@@ -105,7 +106,10 @@ export const editAdRequest  = (editedAd, id) => {
       if(res.status === 200){
         const data = await res.json();
         const ad = data.message;
-        dispatch(editAd(ad));
+        const normalizedAd = normalizeAd(ad);
+        dispatch(editAd(normalizedAd));
+        const ads = getState().ads.map(a => a._id === normalizedAd._id ? normalizedAd : a);
+        localStorage.setItem("ads", JSON.stringify(ads));
         dispatch(updateStatus("success"));
         return res.status;
       } else if(res.status === 400) {
@@ -122,14 +126,14 @@ export const editAdRequest  = (editedAd, id) => {
       }
     } catch (err) {
       console.error({ message: err });
-      dispatch(updateStatus("serverError"));
-      return 500;
+      dispatch(updateStatus("offline"));
+      return;
     }
   }
 }
 
 export const removeAdRequest = (adToRemoveId) => {
-  return async (dispatch) => { 
+  return async (dispatch, getState) => { 
     const options = {
       method: "DELETE",
       credentials: "include"
@@ -140,6 +144,8 @@ export const removeAdRequest = (adToRemoveId) => {
       const res = await fetch(`${API_URL}/api/ads/${adToRemoveId}`, options);
       if(res.status === 200){
         dispatch(removeAd(adToRemoveId));
+        const ads = getState().ads;
+        localStorage.setItem("ads", JSON.stringify(ads));
         dispatch(updateStatus("success"));
       } else if (res.status === 404) {
         dispatch(updateStatus("clientError"));
@@ -152,8 +158,8 @@ export const removeAdRequest = (adToRemoveId) => {
     }
     catch(err) {
       console.error({ message: err });
-      dispatch(updateStatus("serverError"));
-      return 500;
+      dispatch(updateStatus("offline"));
+      return;
     }
   }
 }
@@ -166,7 +172,7 @@ const adsReducer = (statePart = [], action) => {
     case ADD_AD:
       return [ ...statePart, { ...action.payload}];
     case EDIT_AD:
-      return statePart.map(ad => ad._id === action.payload._id ? {...ad, ...action.payload} : ad);
+      return statePart.map(ad => ad._id === action.payload._id ? {...action.payload} : ad);
     case REMOVE_AD:
       return statePart.filter(ad => ad._id !== action.payload);
     default:

@@ -63,11 +63,11 @@ const App = () => {
 
     const handleOnline = async () => {
       const online = await isReallyOnline();
-      if (!online) return;
-
-      dispatch(updateStatus(null));
-      await dispatch(fetchUser());
-      await dispatch(fetchAds());
+      if (online) {
+        dispatch(updateStatus(null));
+        await dispatch(fetchUser());
+        await dispatch(fetchAds());
+      } else return;
     };
 
     const handleOffline = () => {

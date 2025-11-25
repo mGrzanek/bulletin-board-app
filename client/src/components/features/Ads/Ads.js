@@ -15,7 +15,7 @@ const Ads = () => {
         <>
             <Row className="d-flex py-4">
                 {sortedAds.map(ad => (
-                    <AdItem key={ad._id} {...ad} />
+                    <AdItem key={`${ad._id}-${ad.version}`} {...ad} />
                 ))}
                 {sortedAds.length === 0 && <p className="text-center mt-2 mb-5 py-5">No ads found...</p>}
             </Row>

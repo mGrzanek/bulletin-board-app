@@ -46,8 +46,26 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  if (req.method !== "GET") return;
-  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/auth")) return;
+  if (req.method !== "GET") {
+    return;
+  }
+
+  // if (req.method !== "GET") {
+  //   if (!navigator.onLine) {
+  //     event.respondWith(
+  //       new Response(JSON.stringify({
+  //         offline: true,
+  //         message: "You are offline"
+  //       }), {
+  //         status: 503,
+  //         headers: { "Content-Type": "application/json" }
+  //       })
+  //     );
+  //   }
+  //   return;
+  // }
+
+  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/auth")) return;;
   if (req.mode === "navigate") {
     event.respondWith(
       caches.match("/index.html").then(resp => resp || fetch("/index.html"))

@@ -46,7 +46,7 @@ const LoginForm = () => {
                     } else if(res.status === 400) dispatch(updateStatus("clientError"));
                     else dispatch(updateStatus("serverError"));
                 })
-                .catch(err => dispatch(updateStatus("serverError")));
+                .catch(err => dispatch(updateStatus("offline")));
             } else setIsOffline(true);
         }
     };
