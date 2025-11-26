@@ -2,24 +2,28 @@ import { Card, Col, Row, Image, Button } from "react-bootstrap";
 import { useParams, Navigate, NavLink } from "react-router-dom";
 import { getAdById, removeAdRequest } from "../../../redux/adsReducer";
 import { getUser } from "../../../redux/userReducer";
+import { getStatus } from "../../../redux/statusReducer";
 import { useDispatch, useSelector } from "react-redux";
 import styles from './SingleAd.module.scss';
 import clsx from 'clsx';
 import ModalPage from "../../common/ModalPage/ModalPage";
+import AlertMessage from "../../common/AlertMessage/AlertMessage";
+import { useState } from "react";
 
 const SingleAd = () => {
     const {id} = useParams();
     const dispatch = useDispatch();
     const ad = useSelector(state => getAdById(state, id));
     const user = useSelector(getUser);
+    const status = useSelector(getStatus);
+    const [isOffline, setIsOffline] = useState(false);
 
-    const remove = () => {
-        dispatch(removeAdRequest(id)); 
-    }
+    const remove = () => dispatch(removeAdRequest(id));
 
     if(!ad) return <Navigate to="/" />
     else return(
         <Card className="col-12 col-sm-10 col-md-7 m-4 p-3 p-md-4 mx-auto shadow border-warning-subtle rounded">
+             {isOffline && <AlertMessage variant="danger" alertTitle="Offine" alertContent="Action available only online" />}
             <Card.Body>
                 <Card.Img src={ad.image} className={styles.cardImage} />
                 <Card.Title className="text-warning pt-2">{ad.title}</Card.Title>
@@ -36,7 +40,22 @@ const SingleAd = () => {
                         </Col>
                         <Col xs={4} className="d-flex flex-column flex-sm-row justify-content-end align-items-center">
                             {user && user._id === ad.author._id && <Button as={NavLink} to={`/ads/edit/${id}`} variant="outline-info" size="sm" className="m-1 px-3">Edit</Button>}
-                            {user && user._id === ad.author._id && <ModalPage action={remove} buttonName="Delete" content="This action will completely remove this post from the app. Are you sure you want to do this?" />}
+                            {user && user._id === ad.author._id &&(status !== "offline" ? (
+                                <ModalPage
+                                action={remove}
+                                buttonName="Delete"
+                                content="This action will completely remove this post from the app. Are you sure?"
+                                />
+                            ) : (
+                            <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => setIsOffline(true)}
+                                >
+                                Delete
+                                </Button>
+                            )
+                            )}
                         </Col>
                     </Row>
                 </div>
