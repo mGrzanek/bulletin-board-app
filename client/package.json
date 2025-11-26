@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@redux-devtools/extension": "^3.2.5",
     "ajv": "^8.12.0",
