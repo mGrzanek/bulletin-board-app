@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo');
 require('dotenv').config();
 const path = require('path');
 const adsRouter = require('./routes/ads.routes');
+const onlineRouter = require('./routes/isOnline.routes')
 const authRouter = require('./routes/auth.routes');
 const app = express();
 
@@ -48,6 +49,7 @@ db.once('open', () => {
   }));
 
   app.use('/api', adsRouter);
+  app.use('/api', onlineRouter);
   app.use('/auth', authRouter);
 
   app.use(express.static(path.join(__dirname, '/client/build')));

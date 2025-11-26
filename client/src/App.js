@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { API_URL } from "./config";
 import { useDispatch } from "react-redux";
 import { fetchAds, updateAds } from "./redux/adsReducer";
 import { fetchUser, updateUser } from "./redux/userReducer";
@@ -26,13 +27,11 @@ const App = () => {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1500);
 
-      const res = await fetch("/manifest.json", {
-        method: "HEAD",
+      const res = await fetch(`${API_URL}/api/isOnline`, {
         cache: "no-cache",
         signal: controller.signal,
       });
-
-      return res.ok;
+      return res.ok; 
     } catch {
       return false;
     }
@@ -42,7 +41,11 @@ const App = () => {
     const init = async () => {
       const online = await isReallyOnline();
 
-      if (!online) {
+      if (online) {
+        dispatch(updateStatus(null));
+        await dispatch(fetchUser());
+        await dispatch(fetchAds());
+      } else {
         dispatch(updateStatus("offline"));
 
         const cachedUser = localStorage.getItem("user");
@@ -53,10 +56,6 @@ const App = () => {
 
         return;
       }
-
-      dispatch(updateStatus(null));
-      await dispatch(fetchUser());
-      await dispatch(fetchAds());
     };
 
     init();
