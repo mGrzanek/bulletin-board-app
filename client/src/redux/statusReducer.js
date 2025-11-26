@@ -13,7 +13,7 @@ export const updateStatus = (payload) => ({ type: UPDATE_STATUS, payload });
 const statusReducer = (statePart = initialState.status, action) => {
   switch (action.type) {
     case UPDATE_STATUS:
-      if (action.payload) {
+      if (action.payload === "offline") {
         localStorage.setItem("status", action.payload);
       } else {
         localStorage.removeItem("status");

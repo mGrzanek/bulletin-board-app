@@ -25,12 +25,13 @@ const App = () => {
   const isReallyOnline = async () => {
     try {
       const controller = new AbortController();
-      setTimeout(() => controller.abort(), 1500);
+      const timeout = setTimeout(() => controller.abort(), 1500);
 
       const res = await fetch(`${API_URL}/api/isOnline`, {
         cache: "no-cache",
         signal: controller.signal,
       });
+      clearTimeout(timeout);
       return res.ok; 
     } catch {
       return false;
@@ -66,7 +67,7 @@ const App = () => {
         dispatch(updateStatus(null));
         await dispatch(fetchUser());
         await dispatch(fetchAds());
-      } else return;
+      }
     };
 
     const handleOffline = () => {

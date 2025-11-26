@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
-const STATIC_CACHE = "static-v1";
-const DYNAMIC_CACHE = "dynamic-v1";
+const STATIC_CACHE = "static-v2";
+const DYNAMIC_CACHE = "dynamic-v2";
 const FALLBACK_IMAGE = "/images/attention.jpg";
 
 self.addEventListener("install", (event) => {
@@ -31,50 +31,64 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
+    caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter(k => k !== STATIC_CACHE && k !== DYNAMIC_CACHE)
-          .map(k => caches.delete(k))
+          .filter((k) => k !== STATIC_CACHE && k !== DYNAMIC_CACHE)
+          .map((k) => caches.delete(k))
       )
     )
   );
   self.clients.claim();
 });
 
+const networkFirstAPI = async (req) => {
+  try {
+    const resp = await fetch(req);
+    if (!resp.ok) throw new Error("network error");
+    return resp;
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "offline" }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};
+
+const cacheFirstDynamic = async (req) => {
+  const cache = await caches.open(DYNAMIC_CACHE);
+  const cachedResp = await cache.match(req);
+  if (cachedResp) return cachedResp;
+
+  try {
+    const networkResp = await fetch(req);
+    if (networkResp && networkResp.ok) cache.put(req, networkResp.clone());
+    return networkResp;
+  } catch {
+    return cachedResp || new Response("offline", { status: 503 });
+  }
+};
+
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  if (
-    url.pathname.startsWith("/api") ||
-    url.pathname.startsWith("/auth") ||
-    req.method !== "GET"
-  ) {
-    event.respondWith(fetch(req));
+  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/auth")) {
+    event.respondWith(networkFirstAPI(req));
     return;
   }
+
   if (req.mode === "navigate") {
     event.respondWith(
-      caches.match("/index.html").then(resp => resp || fetch("/index.html"))
+      caches.match("/index.html").then((resp) => resp || fetch("/index.html"))
     );
     return;
   }
+
   if (url.origin !== self.origin) return;
 
-  event.respondWith(
-    caches.match(req).then(cacheResp => {
-      if (cacheResp) return cacheResp;
 
-      return fetch(req)
-        .then(networkResp => {
-          if (!networkResp || !networkResp.ok) return cacheResp;
-
-          const respClone = networkResp.clone();
-          caches.open(DYNAMIC_CACHE).then(cache => cache.put(req, respClone));
-          return networkResp;
-        })
-        .catch(() => cacheResp);
-    })
-  );
+  if (req.method === "GET") {
+    event.respondWith(cacheFirstDynamic(req));
+  }
 });
