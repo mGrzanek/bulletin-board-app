@@ -54,6 +54,10 @@ exports.login = async (req, res) => {
                         login: userWithLogin.login,
                     }
                     req.session.user = user;
+                    req.session.save(err => {
+                        if (err) return res.status(500).json({ message: 'Session save failed' });
+                        res.json({ message: 'Login successful!' });
+                    });
                     return res.json({ message: 'Login successful!'});
                 }
                 else return res.status(400).json({ message: 'Login or password are incorrect'});

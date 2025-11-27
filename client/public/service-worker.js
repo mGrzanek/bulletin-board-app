@@ -46,7 +46,6 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url);
 
   if (url.pathname.startsWith("/api") || url.pathname.startsWith("/auth")) {
-    event.respondWith(fetch(req));
     return;
   }
 
