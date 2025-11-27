@@ -11,6 +11,11 @@ const onlineRouter = require('./routes/isOnline.routes')
 const authRouter = require('./routes/auth.routes');
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+];
+
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
@@ -44,7 +49,13 @@ db.once('open', () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   }));
 
