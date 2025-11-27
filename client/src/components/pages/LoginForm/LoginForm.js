@@ -33,7 +33,8 @@ const LoginForm = () => {
                 headers: {
                     "Content-Type": "application/json"
                 }, 
-                body: JSON.stringify({ login, password })
+                body: JSON.stringify({ login, password }),
+                credentials: "include"
             };
             if(status !== "offline"){
                 dispatch(updateStatus("loading"));
