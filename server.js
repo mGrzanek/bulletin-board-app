@@ -11,6 +11,8 @@ const onlineRouter = require('./routes/isOnline.routes')
 const authRouter = require('./routes/auth.routes');
 const app = express();
 
+app.set('trust proxy', 1);
+
 const allowedOrigins = [
   'http://localhost:3000',
   process.env.CLIENT_URL
