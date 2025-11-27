@@ -45,13 +45,8 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  if (
-    req.method !== "GET" ||
-    url.pathname.startsWith("/api") ||
-    url.pathname.startsWith("/auth")
-  ) {
-    event.respondWith(fetch(req, { credentials: "include" }));
-    return;
+  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/auth")) {
+    return; 
   }
 
   if (req.mode === "navigate") {
@@ -62,12 +57,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.origin !== self.origin) return;
-
   event.respondWith(
     caches.match(req).then((cacheResp) => {
       if (cacheResp) return cacheResp;
 
-      return fetch(req, { credentials: "include" })
+      return fetch(req)
         .then((networkResp) => {
           if (!networkResp || !networkResp.ok) return cacheResp;
 
